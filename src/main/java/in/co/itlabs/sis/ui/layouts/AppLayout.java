@@ -28,19 +28,15 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		
 		setFlexDirection(FlexDirection.ROW);
 		setJustifyContentMode(JustifyContentMode.CENTER);
-		setAlignItems(Alignment.START);
-		
+		setAlignItems(Alignment.STRETCH);
+		setHeightFull();
 
-//		FlexLayout root = new FlexLayout();
-//		root.setFlexDirection(FlexDirection.COLUMN);
-//		root.setJustifyContentMode(JustifyContentMode.START);
-//		root.setAlignItems(Alignment.CENTER);
-		
 		VerticalLayout root = new VerticalLayout();
 		
 		
-		root.setWidth("1000px");
-
+		root.setWidth("1100px");
+		root.setHeightFull();
+		
 //		header
 //		navigation
 //		content
@@ -61,7 +57,8 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		footer.add(new H4("Footer"));
 
 		root.add(header, navigation, content, footer);
-
+		root.expand(content);
+		
 		add(root);
 	}
 
