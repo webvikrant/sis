@@ -1,5 +1,8 @@
 package in.co.itlabs.sis.ui.components;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 
@@ -14,8 +17,12 @@ public class Header extends FlexLayout {
 		
 				
 		appSpan.setText("Student Information System");
+
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM, YYYY");
 		
-		dateSpan.setText("Today's date");
+		LocalDate today = LocalDate.now();
+		
+		dateSpan.setText(dateFormatter.format(today));
 
 		add(appSpan, dateSpan);
 	}

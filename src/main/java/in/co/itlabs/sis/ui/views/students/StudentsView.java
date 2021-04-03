@@ -1,16 +1,14 @@
-package in.co.itlabs.sis.ui.students;
+package in.co.itlabs.sis.ui.views.students;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -27,8 +25,6 @@ public class StudentsView extends VerticalLayout {
 	private StudentService studentService;
 
 //	toolbar components
-	private final TextField filterField = new TextField();
-	private final Button createButton = new Button("New");
 
 	private final Grid<Student> grid = new Grid<>(Student.class);
 
@@ -37,29 +33,30 @@ public class StudentsView extends VerticalLayout {
 
 		addClassName("students-view");
 		setSizeFull();
+		setAlignItems(Alignment.CENTER);
 
 		configureGrid();
-		configureFilter();
 
 		// TODO Auto-generated constructor stub
-		Span title = new Span("Students");
-
-		Icon icon = VaadinIcon.PLUS.create();
-		createButton.setIcon(icon);
-
-		createButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		createButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+		Icon icon = VaadinIcon.USERS.create();
+		icon.setSize("14px");
+		
+		Span titleSpan = new Span("Students");
+		
+		HorizontalLayout title = new HorizontalLayout();
+		title.setJustifyContentMode(JustifyContentMode.CENTER);
+		title.setAlignItems(Alignment.CENTER);
+		title.add(icon,titleSpan);
 
 		FlexLayout toolbar = new FlexLayout();
 		toolbar.setWidthFull();
 
 		toolbar.setJustifyContentMode(JustifyContentMode.END);
-		toolbar.add(createButton);
 
 		StudentFilterForm filterForm = new StudentFilterForm();
 		VerticalLayout leftVLayout = new VerticalLayout();
 
-		leftVLayout.add(new Span("Filter"), filterForm);
+		leftVLayout.add(filterForm);
 
 		VerticalLayout rightVLayout = new VerticalLayout();
 		rightVLayout.add(toolbar, grid);
@@ -73,13 +70,7 @@ public class StudentsView extends VerticalLayout {
 		splitLayout.addToSecondary(rightVLayout);
 
 		add(title, splitLayout);
-		setHorizontalComponentAlignment(Alignment.CENTER, title);
-	}
-
-	private void configureFilter() {
-		// TODO Auto-generated method stub
-		filterField.setPlaceholder("Filter by name...");
-
+		setHorizontalComponentAlignment(Alignment.CENTER, titleSpan);
 	}
 
 	private void configureGrid() {
