@@ -49,7 +49,7 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		
 		content = new Div();
 		content.setWidthFull();
-		
+		content.addClassName("content");
 		footer = new Div();
 		
 //		header.add(new H1("Header"));

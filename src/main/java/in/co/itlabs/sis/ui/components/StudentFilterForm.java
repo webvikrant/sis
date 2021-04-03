@@ -4,7 +4,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -12,7 +11,6 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import in.co.itlabs.sis.business.helpers.InfoType;
 
-@CssImport("./components/student-filter-form.css")
 public class StudentFilterForm extends VerticalLayout {
 
 	private ComboBox<InfoType> infoTypeCombo;

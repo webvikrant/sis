@@ -1,6 +1,5 @@
-package in.co.itlabs.sis.ui.views.students;
+package in.co.itlabs.sis.ui.views;
 
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -18,8 +17,7 @@ import in.co.itlabs.sis.ui.components.StudentFilterForm;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
 @PageTitle(value = "Students")
-@Route(value = "", layout = AppLayout.class)
-@CssImport("./views/students-view.css")
+@Route(value = "students", layout = AppLayout.class)
 public class StudentsView extends VerticalLayout {
 
 	private StudentService studentService;
@@ -31,7 +29,6 @@ public class StudentsView extends VerticalLayout {
 	public StudentsView(StudentService studentService) {
 		this.studentService = studentService;
 
-		addClassName("students-view");
 		setSizeFull();
 		setAlignItems(Alignment.CENTER);
 
@@ -39,7 +36,7 @@ public class StudentsView extends VerticalLayout {
 
 		// TODO Auto-generated constructor stub
 		Icon icon = VaadinIcon.USERS.create();
-		icon.setSize("14px");
+		icon.setSize("16px");
 		
 		Span titleSpan = new Span("Students");
 		
