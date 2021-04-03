@@ -6,7 +6,7 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 
-import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
@@ -20,7 +20,7 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 	private Header header;
 	private Navigation navigation;
 	private Div content;
-	private Div footer;
+	private FlexLayout footer;
 
 	public AppLayout() {
 		
@@ -50,11 +50,12 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		content = new Div();
 		content.setWidthFull();
 		content.addClassName("content");
-		footer = new Div();
 		
-//		header.add(new H1("Header"));
-//		navigation.add(new H2("Navigation"));
-		footer.add(new H4("Footer"));
+		footer = new FlexLayout();
+		footer.setWidthFull();
+		footer.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		
+		footer.add(new Span("(c) Vikrant Thakur"), new Span("webvikrant@gmail.com"));
 
 		root.add(header, navigation, content, footer);
 		root.expand(content);

@@ -8,20 +8,12 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Data
-@Table(name = "student")
-public class Student {
-
+@Table(name="session")
+public class Session {
 	@Id
 	@GeneratedValue
 	private long id;
-
-	@Column
-	private String admissionId; // required, unique
-
-	@Column
-	private String name; // required
-
-	// foreign
-	@Column
-	private long sessionId;
+	
+	@Column(name="name")
+	private String name;
 }

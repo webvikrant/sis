@@ -7,22 +7,20 @@ import org.springframework.stereotype.Service;
 
 import com.dieselpoint.norm.Database;
 
-import in.co.itlabs.sis.business.entities.Student;
+import in.co.itlabs.sis.business.entities.Session;
 
 @Service
-public class StudentService {
-
+public class AcademicService {
 	private DatabaseService databaseService;
 
 	@Autowired
-	public StudentService(DatabaseService databaseService) {
+	public AcademicService(DatabaseService databaseService) {
 		this.databaseService = databaseService;
 	}
 
-	public List<Student> getAllStudents() {
+	public List<Session> getAllSessions() {
 		Database db = databaseService.getDatabase();
-		List<Student> students = db.results(Student.class);
-		return students;
+		List<Session> sessions = db.results(Session.class);
+		return sessions;
 	}
-
 }

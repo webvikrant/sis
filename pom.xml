@@ -132,6 +132,28 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.dieselpoint/norm -->
+		<dependency>
+			<groupId>com.dieselpoint</groupId>
+			<artifactId>norm</artifactId>
+			<version>1.0.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.23</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

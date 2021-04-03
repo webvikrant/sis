@@ -1,5 +1,7 @@
 package in.co.itlabs.sis.ui.views;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -26,6 +28,7 @@ public class StudentsView extends VerticalLayout {
 
 	private final Grid<Student> grid = new Grid<>(Student.class);
 
+	@Autowired
 	public StudentsView(StudentService studentService) {
 		this.studentService = studentService;
 
@@ -72,7 +75,7 @@ public class StudentsView extends VerticalLayout {
 
 	private void configureGrid() {
 		// TODO Auto-generated method stub
-		grid.setColumns("id", "name", "fatherName", "motherName", "dateOfBirth", "gender", "mobileNo", "whatsAppNo");
+		grid.setColumns("id", "name");
 		grid.getColumns().forEach(col -> col.setAutoWidth(true));
 		grid.setItems(studentService.getAllStudents());
 	}

@@ -5,4 +5,5 @@
 |____/ |___||____/ 
 
 Student Information System
-by: itlabs.co.in                   
+by: Vikrant Thakur 
+email: webvikrant@gmail.com
