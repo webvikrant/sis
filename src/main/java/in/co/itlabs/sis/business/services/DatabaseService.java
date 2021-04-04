@@ -1,25 +1,35 @@
 package in.co.itlabs.sis.business.services;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.annotation.PreDestroy;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.dieselpoint.norm.Database;
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 
 @Service
 public class DatabaseService {
 
-	private Database db;
+	private ConnectionSource connectionSource;
 
 	public DatabaseService(@Value("${mysql.url}") String url, @Value("${mysql.user}") String user,
-			@Value("${mysql.password}") String password) {
+			@Value("${mysql.password}") String password) throws SQLException {
 
-		db = new Database();
-		db.setJdbcUrl(url);
-		db.setUser(user);
-		db.setPassword(password);
+		connectionSource = new JdbcPooledConnectionSource(url, user, password);
 	}
 
-	public Database getDatabase() {
-		return db;
+	public ConnectionSource getConnectioSource() {
+		return connectionSource;
+	}
+
+	@PreDestroy
+	public void cleanUp() throws IOException {
+		System.out.println("Application shutting down...closing database connection pool...");
+		connectionSource.close();
+		System.out.println("Database connection pool closed...application shut down complete.");
 	}
 }

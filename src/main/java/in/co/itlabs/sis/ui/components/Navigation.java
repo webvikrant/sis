@@ -30,7 +30,7 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 		userHLayout = new HorizontalLayout();
 
 		dashboardButton = new Button("Dashboard", VaadinIcon.DASHBOARD.create());
-		registrationButton = new Button("Registration", VaadinIcon.PLUS.create());
+		registrationButton = new Button("Registration", VaadinIcon.RECORDS.create());
 		studentsButton = new Button("Students", VaadinIcon.USERS.create());
 		studentDetailsButton = new Button("Student details", VaadinIcon.USER_CARD.create());
 

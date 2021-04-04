@@ -1,27 +1,27 @@
 package in.co.itlabs.sis.business.entities;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Table(name = "student")
+@NoArgsConstructor
+@DatabaseTable(tableName = "student")
 public class Student {
 
-	@Id
-	@GeneratedValue
-	private long id;
+	@DatabaseField(generatedId = true)
+	private int id;
 
-	@Column
+	@DatabaseField
 	private String admissionId; // required, unique
 
-	@Column
+	@DatabaseField(canBeNull = false)
 	private String name; // required
 
 	// foreign
-	@Column
-	private long sessionId;
+	@DatabaseField(columnName = "sessionId", foreign = true)
+	private Session session;
+
 }

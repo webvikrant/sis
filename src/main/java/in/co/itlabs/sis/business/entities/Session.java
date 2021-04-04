@@ -1,19 +1,19 @@
 package in.co.itlabs.sis.business.entities;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Table(name="session")
+@NoArgsConstructor
+@DatabaseTable(tableName = "session")
 public class Session {
-	@Id
-	@GeneratedValue
-	private long id;
-	
-	@Column(name="name")
+
+	@DatabaseField(generatedId = true)
+	private int id;
+
+	@DatabaseField(canBeNull = false)
 	private String name;
 }
