@@ -23,43 +23,37 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 	private FlexLayout footer;
 
 	public AppLayout() {
-		
+
 		addClassName("app-layout");
-		
+
 		setFlexDirection(FlexDirection.ROW);
 		setJustifyContentMode(JustifyContentMode.CENTER);
 		setAlignItems(Alignment.STRETCH);
 		setHeightFull();
 
 		VerticalLayout root = new VerticalLayout();
-		
-		
 		root.setWidth("1000px");
 		root.setHeightFull();
-		
-//		header
-//		navigation
-//		content
 
 		header = new Header();
 		header.setWidthFull();
-		
+
 		navigation = new Navigation();
 		navigation.setWidthFull();
-		
+
 		content = new Div();
 		content.setWidthFull();
 		content.addClassName("content");
-		
+
 		footer = new FlexLayout();
 		footer.setWidthFull();
 		footer.setJustifyContentMode(JustifyContentMode.BETWEEN);
-		
+
 		footer.add(new Span("(c) Vikrant Thakur"), new Span("webvikrant@gmail.com"));
 
 		root.add(header, navigation, content, footer);
 		root.expand(content);
-		
+
 		add(root);
 	}
 

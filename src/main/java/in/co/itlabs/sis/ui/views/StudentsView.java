@@ -6,8 +6,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -39,11 +39,11 @@ public class StudentsView extends VerticalLayout {
 		this.newStudentForm = newStudentForm;
 
 		setSizeFull();
-		setAlignItems(Alignment.CENTER);
+		setPadding(false);
+		setAlignItems(Alignment.START);
 
 //		title bar
 		var titleBar = buildTitleBar();
-		setHorizontalComponentAlignment(Alignment.CENTER, titleBar);
 		add(titleBar);
 
 //		split layout
@@ -65,17 +65,10 @@ public class StudentsView extends VerticalLayout {
 
 	}
 
-	private HorizontalLayout buildTitleBar() {
-		// TODO Auto-generated method stub
-		Icon icon = VaadinIcon.USERS.create();
-		icon.setSize("16px");
-
-		Span titleSpan = new Span("Students");
-
-		HorizontalLayout root = new HorizontalLayout();
-		root.add(icon, titleSpan);
-		root.setAlignItems(Alignment.CENTER);
-
+	private Div buildTitleBar() {
+		Div root = new Div();
+		root.addClassName("section-title");
+		root.add("Students");
 		return root;
 	}
 

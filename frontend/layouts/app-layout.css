@@ -7,3 +7,15 @@
 	border-radius: 2px;
 	box-shadow: 1px 1px 2px #b0b0b0;
 }
+
+.app-layout .section-title {
+	padding: 2px 8px 2px 8px;
+	border-left: 4px solid #0071e1;
+	font-size: large;
+}
+
+.app-layout .card {
+	background-color: white;
+	border-radius: 2px;
+	box-shadow: 1px 1px 2px #b0b0b0;
+}

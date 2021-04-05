@@ -6,19 +6,24 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import in.co.itlabs.sis.business.entities.Student;
+import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.NewStudentForm;
+import in.co.itlabs.sis.ui.components.PersonalDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
@@ -30,22 +35,40 @@ public class StudentDetailsView extends VerticalLayout {
 
 	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
+	private Tabs tabs;
+	private Tab personalTab = new Tab("Personal");
+	private Tab academicTab = new Tab("Academic");
+	private Tab scholarshipTab = new Tab("Scholarship");
+
 	private VerticalLayout content;
+	private PersonalDetails personalDetails;
 
 	private Dialog dialog;
 
+	private int studentId = 0;
+
 	@Autowired
-	public StudentDetailsView(StudentService studentService, NewStudentForm newStudentForm, StudentCard studentCard) {
+	public StudentDetailsView(AcademicService academicService, StudentService studentService,
+			NewStudentForm newStudentForm) {
+
 		this.studentService = studentService;
 		this.newStudentForm = newStudentForm;
-		this.studentCard = studentCard;
 
 		setSizeFull();
-		setAlignItems(Alignment.CENTER);
+		setPadding(false);
+		setAlignItems(Alignment.START);
+		
+		studentCard = new StudentCard(academicService, studentService);
+		tabs = new Tabs();
+		personalTab = new Tab("Personal");
+		academicTab = new Tab("Academic");
+		scholarshipTab = new Tab("Scholarship");
+
+		content = new VerticalLayout();
+		personalDetails = new PersonalDetails(academicService, studentService);
 
 //		title bar
 		var titleBar = buildTitleBar();
-		setHorizontalComponentAlignment(Alignment.CENTER, titleBar);
 		add(titleBar);
 
 //		search bar
@@ -67,27 +90,50 @@ public class StudentDetailsView extends VerticalLayout {
 	private SplitLayout buildSplitLayout() {
 		// TODO Auto-generated method stub
 		SplitLayout root = new SplitLayout();
-		root.setSplitterPosition(30);
+		root.setSplitterPosition(25);
 		root.setSizeFull();
+
 		root.addToPrimary(studentCard);
 
-		content = new VerticalLayout();
-		root.addToSecondary(content);
+		configureTabs();
+
+		VerticalLayout tabsLayout = new VerticalLayout();
+		tabsLayout.setPadding(false);
+		tabsLayout.setSpacing(false);
+		tabsLayout.add(tabs, content);
+
+		root.addToSecondary(tabsLayout);
 
 		return root;
 	}
 
-	private HorizontalLayout buildTitleBar() {
-		// TODO Auto-generated method stub
-		Icon icon = VaadinIcon.USER_CARD.create();
-		icon.setSize("16px");
+	private void configureTabs() {
+		content.setPadding(false);
+		content.setSpacing(false);
 
-		Span titleSpan = new Span("Student details");
+		tabs.add(personalTab);
+		tabs.add(academicTab);
+		tabs.add(scholarshipTab);
 
-		HorizontalLayout root = new HorizontalLayout();
-		root.add(icon, titleSpan);
-		root.setAlignItems(Alignment.CENTER);
+		tabs.addSelectedChangeListener(event -> {
+			content.removeAll();
 
+			Tab tab = event.getSelectedTab();
+			if (tab == personalTab) {
+				content.add(personalDetails);
+				personalDetails.setStudentId(studentId);
+			} else if (tab == academicTab) {
+
+			} else if (tab == scholarshipTab) {
+
+			}
+		});
+	}
+
+	private Div buildTitleBar() {
+		Div root = new Div();
+		root.addClassName("section-title");
+		root.add("Student details");
 		return root;
 	}
 
@@ -95,12 +141,6 @@ public class StudentDetailsView extends VerticalLayout {
 		// TODO Auto-generated method stub
 		ComboBox<Student> studentCombo = new ComboBox<Student>();
 		configureCombo(studentCombo);
-
-//		Button createButton = new Button("New Student", VaadinIcon.PLUS.create());
-//		createButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-//		createButton.addClickListener(event -> {
-//			dialog.open();
-//		});
 
 		Span space = new Span();
 
@@ -121,11 +161,13 @@ public class StudentDetailsView extends VerticalLayout {
 		});
 
 		studentCombo.addValueChangeListener(event -> {
-			int id = 0;
+			studentId = 0;
 			if (event.getValue() != null) {
-				id = event.getValue().getId();
+				studentId = event.getValue().getId();
 			}
-			studentCard.setStudentId(id);
+			studentCard.setStudentId(studentId);
+			tabs.setSelectedTab(null);
+			tabs.setSelectedTab(personalTab);
 		});
 	}
 
