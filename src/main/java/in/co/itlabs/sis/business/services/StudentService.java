@@ -35,8 +35,22 @@ public class StudentService {
 		}
 		return id;
 	}
-	
-	public List<Student> getAllStudents(){
+
+	public Student getStudentById(int id) {
+		Student student = null;
+		try {
+			ConnectionSource connectionSource = databaseService.getConnectioSource();
+			Dao<Student, Integer> studentDao = DaoManager.createDao(connectionSource, Student.class);
+			student = studentDao.queryForId(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return student;
+	}
+
+	public List<Student> getAllStudents() {
 		List<Student> students = null;
 		try {
 			ConnectionSource connectionSource = databaseService.getConnectioSource();
@@ -46,7 +60,7 @@ public class StudentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return students;
 	}
 }

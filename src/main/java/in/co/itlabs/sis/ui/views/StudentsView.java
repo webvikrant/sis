@@ -2,6 +2,9 @@ package in.co.itlabs.sis.ui.views;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -15,6 +18,7 @@ import com.vaadin.flow.router.Route;
 
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.StudentService;
+import in.co.itlabs.sis.ui.components.NewStudentForm;
 import in.co.itlabs.sis.ui.components.StudentFilterForm;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
@@ -24,53 +28,121 @@ public class StudentsView extends VerticalLayout {
 
 	private StudentService studentService;
 
-//	toolbar components
-
 	private final Grid<Student> grid = new Grid<>(Student.class);
 
+	private NewStudentForm newStudentForm;
+	private Dialog dialog;
+
 	@Autowired
-	public StudentsView(StudentService studentService) {
+	public StudentsView(StudentService studentService, NewStudentForm newStudentForm) {
 		this.studentService = studentService;
+		this.newStudentForm = newStudentForm;
 
 		setSizeFull();
 		setAlignItems(Alignment.CENTER);
 
-		configureGrid();
+//		title bar
+		var titleBar = buildTitleBar();
+		setHorizontalComponentAlignment(Alignment.CENTER, titleBar);
+		add(titleBar);
 
-		// TODO Auto-generated constructor stub
+//		split layout
+		SplitLayout splitLayout = new SplitLayout();
+		splitLayout.setSplitterPosition(25);
+		splitLayout.setSizeFull();
+		add(splitLayout);
+
+//		filter component on left
+		var filterComponent = buildFilterComponent();
+		splitLayout.addToPrimary(filterComponent);
+
+//		grid etc on right
+		var resultsComponent = buildResultsComponent();
+		splitLayout.addToSecondary(resultsComponent);
+
+		dialog = new Dialog();
+		configureDialog();
+
+	}
+
+	private HorizontalLayout buildTitleBar() {
+		// TODO Auto-generated method stub
 		Icon icon = VaadinIcon.USERS.create();
 		icon.setSize("16px");
-		
+
 		Span titleSpan = new Span("Students");
-		
-		HorizontalLayout title = new HorizontalLayout();
-		title.setJustifyContentMode(JustifyContentMode.CENTER);
-		title.setAlignItems(Alignment.CENTER);
-		title.add(icon,titleSpan);
 
-		FlexLayout toolbar = new FlexLayout();
-		toolbar.setWidthFull();
+		HorizontalLayout root = new HorizontalLayout();
+		root.add(icon, titleSpan);
+		root.setAlignItems(Alignment.CENTER);
 
-		toolbar.setJustifyContentMode(JustifyContentMode.END);
+		return root;
+	}
 
+	private void configureDialog() {
+		// TODO Auto-generated method stub
+		Span title = new Span("New Student");
+		Button closeButton = new Button(VaadinIcon.CLOSE.create());
+		closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		closeButton.addClickListener(event -> {
+			dialog.close();
+		});
+
+		FlexLayout titleBar = new FlexLayout();
+		titleBar.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		titleBar.setWidthFull();
+		titleBar.setAlignItems(Alignment.CENTER);
+		titleBar.add(title, closeButton);
+
+		dialog.add(titleBar, newStudentForm);
+
+		dialog.setWidth("300px");
+		dialog.setModal(true);
+		dialog.setDraggable(true);
+		dialog.setCloseOnOutsideClick(false);
+	}
+
+	private VerticalLayout buildFilterComponent() {
+		// TODO Auto-generated method stub
+		VerticalLayout root = new VerticalLayout();
 		StudentFilterForm filterForm = new StudentFilterForm();
-		VerticalLayout leftVLayout = new VerticalLayout();
+		root.add(filterForm);
+		return root;
+	}
 
-		leftVLayout.add(filterForm);
+	private VerticalLayout buildResultsComponent() {
+		VerticalLayout root = new VerticalLayout();
 
-		VerticalLayout rightVLayout = new VerticalLayout();
-		rightVLayout.add(toolbar, grid);
-		rightVLayout.expand(grid);
+//		tool bar
+		var toolBar = buildToolBar();
+		toolBar.setWidthFull();
 
-		SplitLayout splitLayout = new SplitLayout();
-		splitLayout.setSizeFull();
-		splitLayout.setSplitterPosition(20);
+//		grid
+		configureGrid();
 
-		splitLayout.addToPrimary(leftVLayout);
-		splitLayout.addToSecondary(rightVLayout);
+		root.add(toolBar, grid);
+		root.expand(grid);
 
-		add(title, splitLayout);
-		setHorizontalComponentAlignment(Alignment.CENTER, titleSpan);
+		return root;
+	}
+
+	private HorizontalLayout buildToolBar() {
+		// TODO Auto-generated method stub
+
+		Button createButton = new Button("New", VaadinIcon.PLUS.create());
+		createButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+		createButton.addClickListener(event -> {
+			dialog.open();
+		});
+
+		Span space = new Span();
+
+		HorizontalLayout root = new HorizontalLayout();
+		root.setJustifyContentMode(JustifyContentMode.END);
+		root.add(space, createButton);
+		root.expand(space);
+
+		return root;
 	}
 
 	private void configureGrid() {

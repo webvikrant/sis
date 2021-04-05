@@ -15,7 +15,6 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 	private final HorizontalLayout userHLayout;
 
 	private final Button dashboardButton;
-	private final Button registrationButton;
 	private final Button studentsButton;
 	private final Button studentDetailsButton;
 
@@ -30,7 +29,6 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 		userHLayout = new HorizontalLayout();
 
 		dashboardButton = new Button("Dashboard", VaadinIcon.DASHBOARD.create());
-		registrationButton = new Button("Registration", VaadinIcon.RECORDS.create());
 		studentsButton = new Button("Students", VaadinIcon.USERS.create());
 		studentDetailsButton = new Button("Student details", VaadinIcon.USER_CARD.create());
 
@@ -39,7 +37,7 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 
 		configureButtons();
 
-		menuHLayout.add(dashboardButton, registrationButton, studentsButton, studentDetailsButton);
+		menuHLayout.add(dashboardButton, studentsButton, studentDetailsButton);
 
 		userHLayout.setAlignItems(Alignment.CENTER);
 		userHLayout.add(userButton, logoutButton);
@@ -52,10 +50,6 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 		// TODO Auto-generated method stub
 		dashboardButton.addClickListener(evt -> {
 			UI.getCurrent().navigate("dashboard");
-		});
-
-		registrationButton.addClickListener(evt -> {
-			UI.getCurrent().navigate("registration");
 		});
 
 		studentsButton.addClickListener(evt -> {
@@ -75,7 +69,6 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 	public void afterNavigation(AfterNavigationEvent event) {
 
 		dashboardButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		registrationButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		studentsButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		studentDetailsButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
@@ -84,10 +77,6 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 		switch (location) {
 		case "dashboard":
 			dashboardButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-			break;
-
-		case "registration":
-			registrationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 			break;
 
 		case "students":

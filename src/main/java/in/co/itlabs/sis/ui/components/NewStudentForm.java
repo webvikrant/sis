@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.spring.annotation.UIScope;
 
 import in.co.itlabs.sis.business.entities.Session;
 import in.co.itlabs.sis.business.entities.Student;
@@ -22,6 +23,7 @@ import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 
 @Component
+@UIScope
 public class NewStudentForm extends VerticalLayout {
 
 	private ComboBox<Session> sessionCombo;
