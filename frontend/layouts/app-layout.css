@@ -11,11 +11,21 @@
 .app-layout .section-title {
 	padding: 2px 8px 2px 8px;
 	border-left: 4px solid #0071e1;
-	font-size: large;
+	font-size: medium;
 }
 
 .app-layout .card {
 	background-color: white;
 	border-radius: 2px;
 	box-shadow: 1px 1px 2px #b0b0b0;
+}
+
+.app-layout .photo {
+	border-radius: 2px;
+	box-shadow: 1px 1px 2px #b0b0b0;
+	border-radius: 3%;
+}
+
+.app-layout .small-text {
+	font-size: small;
 }

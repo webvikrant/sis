@@ -1,9 +1,6 @@
 package in.co.itlabs.sis.ui.views;
 
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -20,23 +17,18 @@ public class DashboardView extends VerticalLayout {
 	public DashboardView(StudentService studentService) {
 
 		setSizeFull();
-		setAlignItems(Alignment.CENTER);
-
+		setPadding(false);
+		setAlignItems(Alignment.START);
 		
-
-		// TODO Auto-generated constructor stub
-		Icon icon = VaadinIcon.DASHBOARD.create();
-		icon.setSize("16px");
-
-		Span titleSpan = new Span("Dashboard");
-
-		HorizontalLayout title = new HorizontalLayout();
-		title.setJustifyContentMode(JustifyContentMode.CENTER);
-		title.setAlignItems(Alignment.CENTER);
-		title.add(icon, titleSpan);
-
-		add(title);
-		setHorizontalComponentAlignment(Alignment.CENTER, titleSpan);
+//		title bar
+		var titleBar = buildTitleBar();
+		add(titleBar);
 	}
 
+	private Div buildTitleBar() {
+		Div root = new Div();
+		root.addClassName("section-title");
+		root.add("Dashboard");
+		return root;
+	}
 }

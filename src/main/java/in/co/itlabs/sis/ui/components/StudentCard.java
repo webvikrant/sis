@@ -27,6 +27,7 @@ public class StudentCard extends VerticalLayout {
 		photo = new Image("https://picsum.photos/100/110", "");
 		photo.setWidth("100px");
 		photo.setHeight("110px");
+		photo.addClassName("photo");
 
 		admissionIdField = new TextField("Admission Id");
 		admissionIdField.setWidthFull();

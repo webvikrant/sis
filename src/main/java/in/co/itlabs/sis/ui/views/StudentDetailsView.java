@@ -12,10 +12,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -29,7 +31,7 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 
 @PageTitle(value = "Student details")
 @Route(value = "student-details", layout = AppLayout.class)
-public class StudentDetailsView extends VerticalLayout {
+public class StudentDetailsView extends VerticalLayout implements HasUrlParameter<Integer> {
 
 	private StudentService studentService;
 
@@ -57,7 +59,7 @@ public class StudentDetailsView extends VerticalLayout {
 		setSizeFull();
 		setPadding(false);
 		setAlignItems(Alignment.START);
-		
+
 		studentCard = new StudentCard(academicService, studentService);
 		tabs = new Tabs();
 		personalTab = new Tab("Personal");
@@ -138,16 +140,12 @@ public class StudentDetailsView extends VerticalLayout {
 	}
 
 	private HorizontalLayout buildSearchBar() {
-		// TODO Auto-generated method stub
+
 		ComboBox<Student> studentCombo = new ComboBox<Student>();
 		configureCombo(studentCombo);
 
-		Span space = new Span();
-
 		HorizontalLayout root = new HorizontalLayout();
-//		root.add(studentCombo, space, createButton);
 		root.add(studentCombo);
-//		root.expand(space);
 
 		return root;
 	}
@@ -165,10 +163,15 @@ public class StudentDetailsView extends VerticalLayout {
 			if (event.getValue() != null) {
 				studentId = event.getValue().getId();
 			}
-			studentCard.setStudentId(studentId);
-			tabs.setSelectedTab(null);
-			tabs.setSelectedTab(personalTab);
+
+			loadStudent();
 		});
+	}
+
+	private void loadStudent() {
+		studentCard.setStudentId(studentId);
+		tabs.setSelectedTab(null);
+		tabs.setSelectedTab(personalTab);
 	}
 
 	private void configureDialog() {
@@ -192,5 +195,14 @@ public class StudentDetailsView extends VerticalLayout {
 		dialog.setModal(true);
 		dialog.setDraggable(true);
 		dialog.setCloseOnOutsideClick(false);
+	}
+
+	@Override
+	public void setParameter(BeforeEvent event, @OptionalParameter Integer parameter) {
+		if (parameter == null || parameter == 0) {
+			return;
+		}
+		studentId = parameter;
+		loadStudent();
 	}
 }

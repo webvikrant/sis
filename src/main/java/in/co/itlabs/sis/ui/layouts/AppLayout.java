@@ -3,10 +3,15 @@ package in.co.itlabs.sis.ui.layouts;
 import java.util.Objects;
 
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
@@ -48,8 +53,20 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		footer = new FlexLayout();
 		footer.setWidthFull();
 		footer.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		footer.setAlignItems(Alignment.CENTER);
 
-		footer.add(new Span("(c) Vikrant Thakur"), new Span("webvikrant@gmail.com"));
+		Icon copyright = VaadinIcon.COPYRIGHT.create();
+		copyright.setSize("10px");
+
+		Button button = new Button("Vikrant Thakur", VaadinIcon.COPYRIGHT.create());
+		button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+		Anchor link = new Anchor("https://github.com/webvikrant", button);
+		Span email = new Span("webvikrant@gmail.com");
+		email.addClassName("small-text");
+
+		footer.add(link, email);
 
 		root.add(header, navigation, content, footer);
 		root.expand(content);

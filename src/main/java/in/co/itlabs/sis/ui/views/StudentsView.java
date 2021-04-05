@@ -2,13 +2,17 @@ package in.co.itlabs.sis.ui.views;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -143,5 +147,17 @@ public class StudentsView extends VerticalLayout {
 		grid.setColumns("id", "name");
 		grid.getColumns().forEach(col -> col.setAutoWidth(true));
 		grid.setItems(studentService.getAllStudents());
+
+		grid.addComponentColumn(item -> {
+			return new Anchor("student-details/" + item.getId(), "Details");
+		}).setHeader("Details");
+//		grid.addItemDoubleClickListener(event -> {
+//			Student student = event.getItem();
+//			if (student == null) {
+//				return;
+//			}
+//			Notification.show(student.getName(), 3000, Position.TOP_CENTER);
+//			UI.getCurrent().navigate(StudentDetailsView.class, student.getId());
+//		});
 	}
 }
