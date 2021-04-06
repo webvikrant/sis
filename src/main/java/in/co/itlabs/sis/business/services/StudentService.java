@@ -22,6 +22,7 @@ public class StudentService {
 		this.databaseService = databaseService;
 	}
 
+	// create
 	public int createStudent(Student student) {
 		int id = 0;
 		try {
@@ -36,6 +37,7 @@ public class StudentService {
 		return id;
 	}
 
+	// read one
 	public Student getStudentById(int id) {
 		Student student = null;
 		try {
@@ -50,6 +52,7 @@ public class StudentService {
 		return student;
 	}
 
+	// read many
 	public List<Student> getAllStudents() {
 		List<Student> students = null;
 		try {
@@ -62,5 +65,21 @@ public class StudentService {
 		}
 
 		return students;
+	}
+
+	// update
+	public boolean updateStudent(List<String> messages, Student student) {
+		boolean success = false;
+		try {
+			ConnectionSource connectionSource = databaseService.getConnectioSource();
+			Dao<Student, Integer> studentDao = DaoManager.createDao(connectionSource, Student.class);
+			studentDao.update(student);
+			success = true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			messages.add(e.getMessage());
+		}
+
+		return success;
 	}
 }

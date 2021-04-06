@@ -2,14 +2,8 @@ package in.co.itlabs.sis.ui.views;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -24,7 +18,6 @@ import com.vaadin.flow.router.Route;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
-import in.co.itlabs.sis.ui.components.NewStudentForm;
 import in.co.itlabs.sis.ui.components.PersonalDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
@@ -33,9 +26,10 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 @Route(value = "student-details", layout = AppLayout.class)
 public class StudentDetailsView extends VerticalLayout implements HasUrlParameter<Integer> {
 
+	private AcademicService academicService;
 	private StudentService studentService;
 
-	private NewStudentForm newStudentForm;
+//	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
 	private Tabs tabs;
 	private Tab personalTab = new Tab("Personal");
@@ -45,22 +39,24 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private VerticalLayout content;
 	private PersonalDetails personalDetails;
 
-	private Dialog dialog;
+//	private Dialog dialog;
 
 	private int studentId = 0;
 
 	@Autowired
-	public StudentDetailsView(AcademicService academicService, StudentService studentService,
-			NewStudentForm newStudentForm) {
-
+	public StudentDetailsView(AcademicService academicService, StudentService studentService) {
+		
+		this.academicService = academicService;
 		this.studentService = studentService;
-		this.newStudentForm = newStudentForm;
+		
 
 		setSizeFull();
 		setPadding(false);
 		setAlignItems(Alignment.START);
-
+		
+//		newStudentForm = new NewStudentForm(academicService,studentService);
 		studentCard = new StudentCard(academicService, studentService);
+		
 		tabs = new Tabs();
 		personalTab = new Tab("Personal");
 		academicTab = new Tab("Academic");
@@ -84,8 +80,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		splitLayout.setSizeFull();
 		add(splitLayout);
 
-		dialog = new Dialog();
-		configureDialog();
+//		dialog = new Dialog();
+//		configureDialog();
 
 	}
 
@@ -174,28 +170,28 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		tabs.setSelectedTab(personalTab);
 	}
 
-	private void configureDialog() {
-		// TODO Auto-generated method stub
-		Span title = new Span("New Student");
-		Button closeButton = new Button(VaadinIcon.CLOSE.create());
-		closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		closeButton.addClickListener(event -> {
-			dialog.close();
-		});
-
-		FlexLayout titleBar = new FlexLayout();
-		titleBar.setJustifyContentMode(JustifyContentMode.BETWEEN);
-		titleBar.setWidthFull();
-		titleBar.setAlignItems(Alignment.CENTER);
-		titleBar.add(title, closeButton);
-
-		dialog.add(titleBar, newStudentForm);
-
-		dialog.setWidth("300px");
-		dialog.setModal(true);
-		dialog.setDraggable(true);
-		dialog.setCloseOnOutsideClick(false);
-	}
+//	private void configureDialog() {
+//		// TODO Auto-generated method stub
+//		Span title = new Span("New Student");
+//		Button closeButton = new Button(VaadinIcon.CLOSE.create());
+//		closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+//		closeButton.addClickListener(event -> {
+//			dialog.close();
+//		});
+//
+//		FlexLayout titleBar = new FlexLayout();
+//		titleBar.setJustifyContentMode(JustifyContentMode.BETWEEN);
+//		titleBar.setWidthFull();
+//		titleBar.setAlignItems(Alignment.CENTER);
+//		titleBar.add(title, closeButton);
+//
+//		dialog.add(titleBar, newStudentForm);
+//
+//		dialog.setWidth("300px");
+//		dialog.setModal(true);
+//		dialog.setDraggable(true);
+//		dialog.setCloseOnOutsideClick(false);
+//	}
 
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter Integer parameter) {

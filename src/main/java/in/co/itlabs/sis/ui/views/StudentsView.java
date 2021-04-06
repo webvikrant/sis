@@ -2,7 +2,6 @@ package in.co.itlabs.sis.ui.views;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -21,6 +20,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import in.co.itlabs.sis.business.entities.Student;
+import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.NewStudentForm;
 import in.co.itlabs.sis.ui.components.StudentFilterForm;
@@ -30,6 +30,7 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 @Route(value = "students", layout = AppLayout.class)
 public class StudentsView extends VerticalLayout {
 
+	private AcademicService academicService;
 	private StudentService studentService;
 
 	private final Grid<Student> grid = new Grid<>(Student.class);
@@ -38,9 +39,12 @@ public class StudentsView extends VerticalLayout {
 	private Dialog dialog;
 
 	@Autowired
-	public StudentsView(StudentService studentService, NewStudentForm newStudentForm) {
+	public StudentsView(AcademicService academicService, StudentService studentService) {
+		this.academicService = academicService;
 		this.studentService = studentService;
-		this.newStudentForm = newStudentForm;
+		
+		newStudentForm = new NewStudentForm(academicService, studentService);
+		dialog = new Dialog();
 
 		setSizeFull();
 		setPadding(false);
@@ -64,9 +68,11 @@ public class StudentsView extends VerticalLayout {
 		var resultsComponent = buildResultsComponent();
 		splitLayout.addToSecondary(resultsComponent);
 
-		dialog = new Dialog();
 		configureDialog();
 
+		newStudentForm.addListener(NewStudentForm.StudentCreatedEvent.class, this::handleStudentCreatedEvent);
+
+		reload();
 	}
 
 	private Div buildTitleBar() {
@@ -144,20 +150,32 @@ public class StudentsView extends VerticalLayout {
 
 	private void configureGrid() {
 		// TODO Auto-generated method stub
-		grid.setColumns("id", "name");
+		
+		grid.removeAllColumns();
+		
+		grid.addColumn("admissionId");
+		grid.addColumn("name");
+		
+		grid.addColumn(student->{
+			return student.getSession().getName(); 
+		}).setHeader("Session");
+		
+		grid.addColumn("program");
+		grid.addColumn("stage");
+		
 		grid.getColumns().forEach(col -> col.setAutoWidth(true));
-		grid.setItems(studentService.getAllStudents());
 
 		grid.addComponentColumn(item -> {
 			return new Anchor("student-details/" + item.getId(), "Details");
 		}).setHeader("Details");
-//		grid.addItemDoubleClickListener(event -> {
-//			Student student = event.getItem();
-//			if (student == null) {
-//				return;
-//			}
-//			Notification.show(student.getName(), 3000, Position.TOP_CENTER);
-//			UI.getCurrent().navigate(StudentDetailsView.class, student.getId());
-//		});
+	}
+
+	private void handleStudentCreatedEvent(NewStudentForm.StudentCreatedEvent event) {
+		Notification.show("Student '" + event.getStudent().getName() + "' created.", 3000, Position.TOP_CENTER);
+		reload();
+	}
+
+	private void reload() {
+		grid.setItems(studentService.getAllStudents());
 	}
 }
