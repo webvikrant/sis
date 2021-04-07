@@ -7,49 +7,63 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
+import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Student;
+import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 
-public class StudentNameEditor extends VerticalLayout {
+public class StudentProgramEditor extends VerticalLayout {
 
-	private TextField nameField;
+	private ComboBox<Program> programCombo;
 
 	private Binder<Student> binder;
 
 	private StudentService studentService;
+	private AcademicService academicService;
+
 	private final List<String> messages = new ArrayList<>();
 
-	public StudentNameEditor(StudentService studentService) {
+	public StudentProgramEditor(StudentService studentService, AcademicService academicService) {
 
 		this.studentService = studentService;
+		this.academicService = academicService;
 
 		setPadding(false);
 
-		nameField = new TextField("Name");
-		nameField.setWidthFull();
+		programCombo = new ComboBox<Program>("Program");
+		configureProgramCombo();
 
 		binder = new Binder<>(Student.class);
 
-		binder.forField(nameField).asRequired("Name can not be blank").bind("name");
+		binder.forField(programCombo).asRequired("Program can not be blank").bind("program");
 
 		var actionBar = buildActionBar();
 
-		add(nameField, actionBar);
+		add(programCombo, actionBar);
 
+	}
+
+	private void configureProgramCombo() {
+		programCombo.setWidthFull();
+		programCombo.setItemLabelGenerator(program -> {
+			return program.getName();
+		});
+		programCombo.setItems(academicService.getAllPrograms());
 	}
 
 	public void setStudent(Student student) {
 		binder.setBean(student);
+		programCombo.focus();
 	}
 
 	private HorizontalLayout buildActionBar() {
@@ -61,11 +75,11 @@ public class StudentNameEditor extends VerticalLayout {
 
 			if (binder.validate().isOk()) {
 				messages.clear();
-				boolean success = studentService.updateStudentName(messages, binder.getBean().getId(),
-						binder.getBean().getName());
+				boolean success = studentService.updateStudentProgram(messages, binder.getBean().getId(),
+						binder.getBean().getProgram().getId());
 
 				if (success) {
-					fireEvent(new NameUpdatedEvent(this, binder.getBean()));
+					fireEvent(new ProgramUpdatedEvent(this, binder.getBean()));
 				} else {
 					Notification.show(messages.toString(), 3000, Position.TOP_CENTER);
 				}
@@ -85,10 +99,10 @@ public class StudentNameEditor extends VerticalLayout {
 		return root;
 	}
 
-	public static abstract class StudentEvent extends ComponentEvent<StudentNameEditor> {
+	public static abstract class StudentEvent extends ComponentEvent<StudentProgramEditor> {
 		private Student student;
 
-		protected StudentEvent(StudentNameEditor source, Student student) {
+		protected StudentEvent(StudentProgramEditor source, Student student) {
 
 			super(source, false);
 			this.student = student;
@@ -99,8 +113,8 @@ public class StudentNameEditor extends VerticalLayout {
 		}
 	}
 
-	public static class NameUpdatedEvent extends StudentEvent {
-		NameUpdatedEvent(StudentNameEditor source, Student student) {
+	public static class ProgramUpdatedEvent extends StudentEvent {
+		ProgramUpdatedEvent(StudentProgramEditor source, Student student) {
 			super(source, student);
 		}
 	}

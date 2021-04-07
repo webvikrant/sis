@@ -73,4 +73,5 @@ public class Student {
 	
 	// transient fields
 	private Session session;
+	private Program program;
 }

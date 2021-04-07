@@ -18,7 +18,7 @@ import com.vaadin.flow.router.Route;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
-import in.co.itlabs.sis.ui.components.PersonalDetailsEditor;
+import in.co.itlabs.sis.ui.components.StudentPersonalDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
@@ -32,12 +32,14 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 //	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
 	private Tabs tabs;
-	private Tab personalTab = new Tab("Personal");
-	private Tab academicTab = new Tab("Academic");
-	private Tab scholarshipTab = new Tab("Scholarship");
+	private Tab personalTab;
+	private Tab parentsTab;
+	private Tab academicTab;
+	private Tab scholarshipTab;
+	private Tab documentsTab;
 
 	private VerticalLayout content;
-	private PersonalDetailsEditor personalDetails;
+	private StudentPersonalDetails personalDetails;
 
 //	private Dialog dialog;
 
@@ -45,25 +47,27 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 
 	@Autowired
 	public StudentDetailsView(AcademicService academicService, StudentService studentService) {
-		
+
 		this.academicService = academicService;
 		this.studentService = studentService;
-		
 
 		setSizeFull();
 		setPadding(false);
 		setAlignItems(Alignment.START);
-		
+
 //		newStudentForm = new NewStudentForm(academicService,studentService);
 		studentCard = new StudentCard(academicService, studentService);
-		
+
 		tabs = new Tabs();
+
 		personalTab = new Tab("Personal");
+		parentsTab = new Tab("Parents");
 		academicTab = new Tab("Academic");
 		scholarshipTab = new Tab("Scholarship");
+		documentsTab = new Tab("Documents");
 
 		content = new VerticalLayout();
-		personalDetails = new PersonalDetailsEditor(academicService, studentService);
+		personalDetails = new StudentPersonalDetails(academicService, studentService);
 
 //		title bar
 		var titleBar = buildTitleBar();
@@ -110,8 +114,10 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		content.setSpacing(false);
 
 		tabs.add(personalTab);
+		tabs.add(parentsTab);
 		tabs.add(academicTab);
 		tabs.add(scholarshipTab);
+		tabs.add(documentsTab);
 
 		tabs.addSelectedChangeListener(event -> {
 			content.removeAll();
@@ -169,29 +175,6 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		tabs.setSelectedTab(null);
 		tabs.setSelectedTab(personalTab);
 	}
-
-//	private void configureDialog() {
-//		// TODO Auto-generated method stub
-//		Span title = new Span("New Student");
-//		Button closeButton = new Button(VaadinIcon.CLOSE.create());
-//		closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-//		closeButton.addClickListener(event -> {
-//			dialog.close();
-//		});
-//
-//		FlexLayout titleBar = new FlexLayout();
-//		titleBar.setJustifyContentMode(JustifyContentMode.BETWEEN);
-//		titleBar.setWidthFull();
-//		titleBar.setAlignItems(Alignment.CENTER);
-//		titleBar.add(title, closeButton);
-//
-//		dialog.add(titleBar, newStudentForm);
-//
-//		dialog.setWidth("300px");
-//		dialog.setModal(true);
-//		dialog.setDraggable(true);
-//		dialog.setCloseOnOutsideClick(false);
-//	}
 
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter Integer parameter) {

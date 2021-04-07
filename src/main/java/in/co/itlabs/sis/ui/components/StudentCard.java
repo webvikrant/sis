@@ -1,14 +1,9 @@
 package in.co.itlabs.sis.ui.components;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
@@ -33,19 +28,24 @@ public class StudentCard extends VerticalLayout {
 	private StudentService studentService;
 
 	private StudentNameEditor nameEditor;
+	private StudentProgramEditor programEditor;
+
 	private Dialog dialog;
 
 	public StudentCard(AcademicService academicService, StudentService studentService) {
 		this.academicService = academicService;
 		this.studentService = studentService;
 
+		dialog = new Dialog();
+		configureDialog();
+		
 		photo = new Image("https://picsum.photos/100/110", "");
 		photo.setWidth("100px");
 		photo.setHeight("110px");
 		photo.addClassName("photo");
 
 		nameField = new TextField("Name");
-		configureNamefield();
+		configureNameField();
 
 		admissionIdField = new TextField("Admission Id");
 		configureAdmissionIdField();
@@ -62,21 +62,19 @@ public class StudentCard extends VerticalLayout {
 		card.add(photo, nameField, admissionIdField, programField, stageField);
 
 		add(card);
-
-		nameEditor = new StudentNameEditor(studentService);
-		dialog = new Dialog();
-		configureDialog();
-
-		nameEditor.addListener(StudentNameEditor.NameUpdatedEvent.class, this::handleNameUpdatedEvent);
-
 	}
 
-	private void configureNamefield() {
+	private void configureNameField() {
 		nameField.setWidthFull();
 		nameField.setReadOnly(true);
 		nameField.getElement().addEventListener("dblclick", e -> {
-//			Notification.show("Student Id: " + studentId, 3000, Position.TOP_CENTER);
 			dialog.open();
+			if (nameEditor == null) {
+				nameEditor = new StudentNameEditor(studentService);
+				nameEditor.addListener(StudentNameEditor.NameUpdatedEvent.class, this::handleNameUpdatedEvent);
+			}
+			dialog.removeAll();
+			dialog.add(nameEditor);
 			nameEditor.setStudent(student);
 		});
 	}
@@ -89,6 +87,17 @@ public class StudentCard extends VerticalLayout {
 	private void configureProgramField() {
 		programField.setWidthFull();
 		programField.setReadOnly(true);
+		programField.getElement().addEventListener("dblclick", e -> {
+			dialog.open();
+			if (programEditor == null) {
+				programEditor = new StudentProgramEditor(studentService, academicService);
+				programEditor.addListener(StudentProgramEditor.ProgramUpdatedEvent.class,
+						this::handleProgramUpdatedEvent);
+			}
+			dialog.removeAll();
+			dialog.add(programEditor);
+			programEditor.setStudent(student);
+		});
 	}
 
 	private void configureStageField() {
@@ -109,25 +118,9 @@ public class StudentCard extends VerticalLayout {
 
 	private void configureDialog() {
 		// TODO Auto-generated method stub
-		Span title = new Span("Edit Student Name");
-		Button closeButton = new Button(VaadinIcon.CLOSE.create());
-		closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		closeButton.addClickListener(event -> {
-			dialog.close();
-		});
-
-		FlexLayout titleBar = new FlexLayout();
-		titleBar.setJustifyContentMode(JustifyContentMode.BETWEEN);
-		titleBar.setWidthFull();
-		titleBar.setAlignItems(Alignment.CENTER);
-		titleBar.add(title, closeButton);
-
-		dialog.add(titleBar, nameEditor);
-
 		dialog.setWidth("300px");
 		dialog.setModal(true);
 		dialog.setDraggable(true);
-		dialog.setCloseOnOutsideClick(false);
 	}
 
 	private void handleNameUpdatedEvent(StudentNameEditor.NameUpdatedEvent event) {
@@ -135,20 +128,26 @@ public class StudentCard extends VerticalLayout {
 		reload();
 	}
 
+	private void handleProgramUpdatedEvent(StudentProgramEditor.ProgramUpdatedEvent event) {
+		Notification.show("Student '" + event.getStudent().getName() + "' updated.", 3000, Position.TOP_CENTER);
+		reload();
+	}
+
 	private void reload() {
 		student = studentService.getStudentById(studentId);
+
 		nameField.setValue(student.getName());
 		admissionIdField.setValue(student.getAdmissionId());
 
-//		Program program = student.getProgram();
-//		if (program != null) {
-//			programField.setValue(student.getProgram().getName());
-//		}
-//
-//		Stage stage = student.getStage();
-//		if (stage != null) {
-//			stageField.setValue(student.getStage().name());
-//		}
+		Program program = student.getProgram();
+		if (program != null) {
+			programField.setValue(student.getProgram().getName());
+		}
+
+		Stage stage = student.getStage();
+		if (stage != null) {
+			stageField.setValue(student.getStage().name());
+		}
 
 	}
 
