@@ -24,7 +24,6 @@ public class StudentNameEditor extends VerticalLayout {
 
 	private TextField nameField;
 
-//	private Student student;
 	private Binder<Student> binder;
 
 	private StudentService studentService;
@@ -63,13 +62,13 @@ public class StudentNameEditor extends VerticalLayout {
 
 			if (binder.validate().isOk()) {
 				messages.clear();
-				boolean success = studentService.updateStudent(messages, binder.getBean());
-
-				if (success) {
-					fireEvent(new NameUpdatedEvent(this, binder.getBean()));
-				} else {
-					Notification.show(messages.toString(), 3000, Position.TOP_CENTER);
-				}
+//				boolean success = studentService.updateStudent(messages, binder.getBean());
+//
+//				if (success) {
+//					fireEvent(new NameUpdatedEvent(this, binder.getBean()));
+//				} else {
+//					Notification.show(messages.toString(), 3000, Position.TOP_CENTER);
+//				}
 			}
 
 		});

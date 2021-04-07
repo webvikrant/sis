@@ -12,16 +12,19 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
+import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Student;
+import in.co.itlabs.sis.business.helpers.Stage;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 
 public class StudentCard extends VerticalLayout {
 
 	private Image photo;
-	private TextField sessionField;
-	private TextField admissionIdField;
 	private TextField nameField;
+	private TextField admissionIdField;
+	private TextField programField;
+	private TextField stageField;
 
 	private int studentId;
 	private Student student;
@@ -41,16 +44,22 @@ public class StudentCard extends VerticalLayout {
 		photo.setHeight("110px");
 		photo.addClassName("photo");
 
+		nameField = new TextField("Name");
+		configureNamefield();
+
 		admissionIdField = new TextField("Admission Id");
 		configureAdmissionIdField();
 
-		nameField = new TextField("Name");
-		configureNamefield();
+		programField = new TextField("Program");
+		configureProgramField();
+
+		stageField = new TextField("Stage");
+		configureStageField();
 
 		VerticalLayout card = new VerticalLayout();
 		card.addClassName("card");
 		card.setAlignItems(Alignment.CENTER);
-		card.add(photo, admissionIdField, nameField);
+		card.add(photo, nameField, admissionIdField, programField, stageField);
 
 		add(card);
 
@@ -75,6 +84,17 @@ public class StudentCard extends VerticalLayout {
 	private void configureAdmissionIdField() {
 		admissionIdField.setWidthFull();
 		admissionIdField.setReadOnly(true);
+	}
+
+	private void configureProgramField() {
+		programField.setWidthFull();
+		programField.setReadOnly(true);
+	}
+
+	private void configureStageField() {
+		// TODO Auto-generated method stub
+		stageField.setWidthFull();
+		stageField.setReadOnly(true);
 	}
 
 	public void setStudentId(int id) {
@@ -117,8 +137,19 @@ public class StudentCard extends VerticalLayout {
 
 	private void reload() {
 		student = studentService.getStudentById(studentId);
-		admissionIdField.setValue(student.getAdmissionId());
 		nameField.setValue(student.getName());
+		admissionIdField.setValue(student.getAdmissionId());
+
+//		Program program = student.getProgram();
+//		if (program != null) {
+//			programField.setValue(student.getProgram().getName());
+//		}
+//
+//		Stage stage = student.getStage();
+//		if (stage != null) {
+//			stageField.setValue(student.getStage().name());
+//		}
+
 	}
 
 }

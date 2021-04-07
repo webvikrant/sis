@@ -1,4 +1,4 @@
-package in.co.itlabs.sis.ui.views;
+package in.co.itlabs.sis.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,7 @@ import com.vaadin.flow.router.Route;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
-import in.co.itlabs.sis.ui.components.PersonalDetails;
+import in.co.itlabs.sis.ui.components.PersonalDetailsEditor;
 import in.co.itlabs.sis.ui.components.StudentCard;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
@@ -37,7 +37,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private Tab scholarshipTab = new Tab("Scholarship");
 
 	private VerticalLayout content;
-	private PersonalDetails personalDetails;
+	private PersonalDetailsEditor personalDetails;
 
 //	private Dialog dialog;
 
@@ -63,7 +63,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		scholarshipTab = new Tab("Scholarship");
 
 		content = new VerticalLayout();
-		personalDetails = new PersonalDetails(academicService, studentService);
+		personalDetails = new PersonalDetailsEditor(academicService, studentService);
 
 //		title bar
 		var titleBar = buildTitleBar();

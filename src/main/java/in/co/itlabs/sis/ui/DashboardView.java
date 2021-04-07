@@ -1,4 +1,4 @@
-package in.co.itlabs.sis.ui.views;
+package in.co.itlabs.sis.ui;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

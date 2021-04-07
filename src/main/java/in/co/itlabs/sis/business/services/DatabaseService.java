@@ -1,35 +1,68 @@
 package in.co.itlabs.sis.business.services;
 
-import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Map;
 
-import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.sql2o.Sql2o;
+import org.sql2o.converters.Converter;
+import org.sql2o.converters.ConverterException;
+import org.sql2o.quirks.NoQuirks;
+import org.sql2o.quirks.Quirks;
 
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
+import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
+import com.mysql.cj.jdbc.MysqlDataSource;
 
 @Service
 public class DatabaseService {
 
-	private ConnectionSource connectionSource;
+	private final Sql2o sql2o;
 
 	public DatabaseService(@Value("${mysql.url}") String url, @Value("${mysql.user}") String user,
 			@Value("${mysql.password}") String password) throws SQLException {
 
-		connectionSource = new JdbcPooledConnectionSource(url, user, password);
+//		sql2o = new Sql2o(url, user, password);
+		final MysqlDataSource  dataSource = new MysqlConnectionPoolDataSource();
+		dataSource.setUrl(url);
+		dataSource.setUser(user);
+		dataSource.setPassword(password);
+		
+		final Quirks quirks = new NoQuirks(){
+		    {
+		        converters.put(LocalDate.class, new LocalDateConverter());
+		    }
+		};
+		
+		sql2o = new Sql2o(dataSource, quirks);
 	}
 
-	public ConnectionSource getConnectioSource() {
-		return connectionSource;
+	public Sql2o getSql2o() {
+		return sql2o;
 	}
 
-	@PreDestroy
-	public void cleanUp() throws IOException {
-		System.out.println("Application shutting down...closing database connection pool...");
-		connectionSource.close();
-		System.out.println("Database connection pool closed...application shut down complete.");
+	private class LocalDateConverter implements Converter<LocalDate> {
+		@Override
+		public LocalDate convert(final Object val) throws ConverterException {
+			if (val instanceof java.sql.Date) {
+				return ((java.sql.Date) val).toLocalDate();
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public Object toDatabaseParam(final LocalDate val) {
+			if (val == null) {
+				return null;
+			} else {
+				return new java.sql.Date(val.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
+			}
+		}
 	}
+
 }

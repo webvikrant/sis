@@ -1,4 +1,4 @@
-package in.co.itlabs.sis.ui.views;
+package in.co.itlabs.sis.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,7 +42,7 @@ public class StudentsView extends VerticalLayout {
 	public StudentsView(AcademicService academicService, StudentService studentService) {
 		this.academicService = academicService;
 		this.studentService = studentService;
-		
+
 		newStudentForm = new NewStudentForm(academicService, studentService);
 		dialog = new Dialog();
 
@@ -150,19 +150,23 @@ public class StudentsView extends VerticalLayout {
 
 	private void configureGrid() {
 		// TODO Auto-generated method stub
-		
+
 		grid.removeAllColumns();
-		
+
 		grid.addColumn("admissionId");
 		grid.addColumn("name");
-		
-		grid.addColumn(student->{
-			return student.getSession().getName(); 
+
+		grid.addColumn(student -> {
+			String value = "";
+			if (student.getSession() != null) {
+				value = student.getSession().getName();
+			}
+			return value;
 		}).setHeader("Session");
-		
-		grid.addColumn("program");
+
+		grid.addColumn("programId");
 		grid.addColumn("stage");
-		
+
 		grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
 		grid.addComponentColumn(item -> {

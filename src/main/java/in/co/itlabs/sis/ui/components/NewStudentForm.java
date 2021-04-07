@@ -50,7 +50,7 @@ public class NewStudentForm extends VerticalLayout {
 
 		binder = new Binder<>(Student.class);
 
-		binder.forField(sessionCombo).asRequired("Session can not be blank").bind("session");
+//		binder.forField(sessionCombo).asRequired("Session can not be blank").bind("session");
 		binder.forField(admissionIdField).asRequired("Admission Id can not be blank").bind("admissionId");
 		binder.forField(nameField).asRequired("Name can not be blank").bind("name");
 
@@ -79,7 +79,7 @@ public class NewStudentForm extends VerticalLayout {
 			try {
 				Student student = new Student();
 				binder.writeBean(student);
-				studentService.createStudent(student);
+//				studentService.createStudent(student);
 				fireEvent(new StudentCreatedEvent(this, student));
 
 			} catch (ValidationException e) {
