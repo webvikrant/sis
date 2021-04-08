@@ -17,39 +17,48 @@ import com.vaadin.flow.router.Route;
 
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
+import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.StudentPersonalDetails;
+import in.co.itlabs.sis.ui.components.StudentAddressDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
+import in.co.itlabs.sis.ui.components.StudentContactDetails;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
 @PageTitle(value = "Student details")
 @Route(value = "student-details", layout = AppLayout.class)
 public class StudentDetailsView extends VerticalLayout implements HasUrlParameter<Integer> {
 
-	private AcademicService academicService;
 	private StudentService studentService;
+	private AcademicService academicService;
+	private AddressService addressService;
 
 //	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
 	private Tabs tabs;
 	private Tab personalTab;
-	private Tab parentsTab;
+	private Tab contactTab;
+	private Tab addressTab;
 	private Tab academicTab;
 	private Tab scholarshipTab;
 	private Tab documentsTab;
 
 	private VerticalLayout content;
 	private StudentPersonalDetails personalDetails;
+	private StudentContactDetails contactDetails;
+	private StudentAddressDetails addressDetails;
 
 //	private Dialog dialog;
 
 	private int studentId = 0;
 
 	@Autowired
-	public StudentDetailsView(AcademicService academicService, StudentService studentService) {
+	public StudentDetailsView(StudentService studentService, AcademicService academicService,
+			AddressService addressService) {
 
-		this.academicService = academicService;
 		this.studentService = studentService;
+		this.academicService = academicService;
+		this.addressService = addressService;
 
 		setSizeFull();
 		setPadding(false);
@@ -61,13 +70,13 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		tabs = new Tabs();
 
 		personalTab = new Tab("Personal");
-		parentsTab = new Tab("Parents");
+		contactTab = new Tab("Contact");
+		addressTab = new Tab("Address");
 		academicTab = new Tab("Academic");
 		scholarshipTab = new Tab("Scholarship");
 		documentsTab = new Tab("Documents");
 
 		content = new VerticalLayout();
-		personalDetails = new StudentPersonalDetails(academicService, studentService);
 
 //		title bar
 		var titleBar = buildTitleBar();
@@ -114,7 +123,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		content.setSpacing(false);
 
 		tabs.add(personalTab);
-		tabs.add(parentsTab);
+		tabs.add(contactTab);
+		tabs.add(addressTab);
 		tabs.add(academicTab);
 		tabs.add(scholarshipTab);
 		tabs.add(documentsTab);
@@ -124,9 +134,24 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 
 			Tab tab = event.getSelectedTab();
 			if (tab == personalTab) {
+				if (personalDetails == null) {
+					personalDetails = new StudentPersonalDetails(studentService, academicService);
+				}
 				content.add(personalDetails);
 				personalDetails.setStudentId(studentId);
-			} else if (tab == academicTab) {
+			} else if (tab == contactTab) {
+				if (contactDetails == null) {
+					contactDetails = new StudentContactDetails(studentService, academicService);
+				}
+				content.add(contactDetails);
+				contactDetails.setStudentId(studentId);
+
+			} else if (tab == addressTab) {
+				if (addressDetails == null) {
+					addressDetails = new StudentAddressDetails(studentService, addressService);
+				}
+				content.add(addressDetails);
+				addressDetails.setStudentId(studentId);
 
 			} else if (tab == scholarshipTab) {
 

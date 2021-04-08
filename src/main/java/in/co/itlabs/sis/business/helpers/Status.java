@@ -1,5 +1,5 @@
 package in.co.itlabs.sis.business.helpers;
 
 public enum Status {
-	Reg, Ex, Re
+	Regular, Ex_Student, Re_Admission, Passed_Out, Dropped_Out, Withdrew_Admission
 }

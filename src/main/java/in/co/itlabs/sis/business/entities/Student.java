@@ -70,8 +70,12 @@ public class Student {
 	private int programId;
 	private Stage stage;
 	private Status status;
-	
+
 	// transient fields
 	private Session session;
 	private Program program;
+	private District permanentDistrict;
+	private District correspondenceDistrict;
+	private District localGuardianDistrict;
+
 }

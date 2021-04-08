@@ -19,6 +19,7 @@ public class StudentCard extends VerticalLayout {
 	private TextField nameField;
 	private TextField admissionIdField;
 	private TextField programField;
+	private TextField statusField;
 	private TextField stageField;
 
 	private int studentId;
@@ -53,13 +54,16 @@ public class StudentCard extends VerticalLayout {
 		programField = new TextField("Program");
 		configureProgramField();
 
+		statusField = new TextField("Status");
+		configureStatusField();
+
 		stageField = new TextField("Stage");
 		configureStageField();
 
 		VerticalLayout card = new VerticalLayout();
 		card.addClassName("card");
 		card.setAlignItems(Alignment.CENTER);
-		card.add(photo, nameField, admissionIdField, programField, stageField);
+		card.add(photo, nameField, admissionIdField, programField, statusField, stageField);
 
 		add(card);
 	}
@@ -98,6 +102,12 @@ public class StudentCard extends VerticalLayout {
 			dialog.add(programEditor);
 			programEditor.setStudent(student);
 		});
+	}
+
+	private void configureStatusField() {
+		// TODO Auto-generated method stub
+		statusField.setWidthFull();
+		statusField.setReadOnly(true);
 	}
 
 	private void configureStageField() {

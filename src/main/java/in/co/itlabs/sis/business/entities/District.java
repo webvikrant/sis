@@ -8,5 +8,8 @@ import lombok.NoArgsConstructor;
 public class District {
 	private int id;
 	private String name;
+	private int stateId;
+
+	// transient
 	private State state;
 }
