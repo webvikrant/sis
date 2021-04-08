@@ -1,22 +1,21 @@
 package in.co.itlabs.sis.ui.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
+import in.co.itlabs.sis.business.entities.Address;
+import in.co.itlabs.sis.business.entities.Address.Type;
 import in.co.itlabs.sis.business.entities.District;
-import in.co.itlabs.sis.business.entities.State;
 import in.co.itlabs.sis.business.entities.Student;
-import in.co.itlabs.sis.business.helpers.AddressType;
 import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
 
 public class AddressCard extends VerticalLayout {
-
-	private AddressType addressType;
 
 	private TextField typeField;
 	private TextField stateField;
@@ -25,19 +24,22 @@ public class AddressCard extends VerticalLayout {
 	private TextField pincodeField;
 
 	private int studentId;
-	private Student student;
+	private Address.Type addressType;
+	private Address address;
 
-	private StudentService studentService;
 	private AddressService addressService;
+	private StudentService studentService;
 
-	private StudentStateEditor stateEditor;
+	private DistrictStateEditor districtStateEditor;
 
 	private Dialog dialog;
 
-	public AddressCard(StudentService studentService, AddressService addressService, AddressType addressType) {
-		this.addressType = addressType;
-		this.studentService = studentService;
+	private final List<String> messages = new ArrayList<>();
+
+	public AddressCard(AddressService addressService, StudentService studentService, Address.Type addressType) {
 		this.addressService = addressService;
+		this.studentService = studentService;
+		this.addressType = addressType;
 
 		dialog = new Dialog();
 		configureDialog();
@@ -75,19 +77,29 @@ public class AddressCard extends VerticalLayout {
 		stateField.setReadOnly(true);
 		stateField.getElement().addEventListener("dblclick", e -> {
 			dialog.open();
-//			if (stateEditor == null) {
-//				stateEditor = new StudentStateEditor(studentService, addressService);
-//				stateEditor.addListener(StudentNameEditor.NameUpdatedEvent.class, this::handleNameUpdatedEvent);
-//			}
-//			dialog.removeAll();
-//			dialog.add(stateEditor);
-//			stateEditor.setStudent(student);
+			if (districtStateEditor == null) {
+				districtStateEditor = new DistrictStateEditor(addressService);
+				districtStateEditor.addListener(DistrictStateEditor.SaveEvent.class, this::handleDistrictSaveEvent);
+			}
+			dialog.removeAll();
+			dialog.add(districtStateEditor);
+			districtStateEditor.setAddress(address);
 		});
 	}
 
 	private void configureDistrictField() {
 		districtField.setWidthFull();
 		districtField.setReadOnly(true);
+		districtField.getElement().addEventListener("dblclick", e -> {
+			dialog.open();
+			if (districtStateEditor == null) {
+				districtStateEditor = new DistrictStateEditor(addressService);
+				districtStateEditor.addListener(DistrictStateEditor.SaveEvent.class, this::handleDistrictSaveEvent);
+			}
+			dialog.removeAll();
+			dialog.add(districtStateEditor);
+			districtStateEditor.setAddress(address);
+		});
 	}
 
 	private void configureAddressField() {
@@ -113,14 +125,9 @@ public class AddressCard extends VerticalLayout {
 		pincodeField.setReadOnly(true);
 	}
 
-	public void setStudentId(int id) {
-		this.studentId = id;
-		if (id == 0) {
-			AddressCard.this.setEnabled(false);
-		} else {
-			AddressCard.this.setEnabled(true);
-			reload();
-		}
+	public void setStudentId(int studentId) {
+		this.studentId = studentId;
+		reload();
 	}
 
 	private void configureDialog() {
@@ -130,44 +137,92 @@ public class AddressCard extends VerticalLayout {
 		dialog.setDraggable(true);
 	}
 
-	private void handleStateUpdatedEvent(StudentStateEditor.StateUpdatedEvent event) {
-		Notification.show("Student '" + event.getStudent().getName() + "' updated.", 3000, Position.TOP_CENTER);
+	private void handleDistrictSaveEvent(DistrictStateEditor.SaveEvent event) {
+		Address updatedAddress = event.getAddress();
+		int districtId = 0;
+		if (event.getAddress().getDistrict() != null) {
+			districtId = event.getAddress().getDistrict().getId();
+		}
+		if (updatedAddress.getType() == Type.Permanent) {
+			studentService.updateStudentPermanentDistrict(messages, updatedAddress.getStudentId(), districtId);
+		} else if (updatedAddress.getType() == Type.Correspondence) {
+			studentService.updateStudentCorrespondenceDistrict(messages, updatedAddress.getStudentId(), districtId);
+		} else if (updatedAddress.getType() == Type.Local_Guardian) {
+			studentService.updateStudentLocalGuardianDistrict(messages, updatedAddress.getStudentId(), districtId);
+		}
 		reload();
 	}
 
 	private void reload() {
-		student = studentService.getStudentById(studentId);
+
+		Student student = studentService.getStudentById(studentId);
+
+		address = new Address();
+
+		address.setStudentId(studentId);
+		address.setType(addressType);
 
 		District district = null;
-		State state = null;
 
-		if (addressType == AddressType.Permanent) {
+		switch (addressType) {
+		case Permanent:
+			district = addressService.getDistrict(student.getPermanentDistrictId());
+
+			address.setAddress(student.getPermanentAddress());
+			address.setPinCode(student.getPermanentPinCode());
+			address.setDistrict(district);
+			address.setState(district.getState());
+
+			break;
+
+		case Correspondence:
+			district = addressService.getDistrict(student.getCorrespondenceDistrictId());
+
+			address.setAddress(student.getCorrespondenceAddress());
+			address.setPinCode(student.getCorrespondencePinCode());
+			address.setDistrict(district);
+			address.setState(district.getState());
+
+			break;
+
+		case Local_Guardian:
+			district = addressService.getDistrict(student.getLocalGuardianDistrictId());
+
+			address.setAddress(student.getLocalGuardianAddress());
+			address.setPinCode(student.getLocalGuardianPinCode());
+			address.setDistrict(district);
+			address.setState(district.getState());
+
+			break;
+
+		default:
+			break;
+		}
+
+		if (addressType == Address.Type.Permanent) {
 			typeField.setValue("Permanent");
 
-			district = student.getPermanentDistrict();
-			if (district != null) {
-				districtField.setValue(district.getName());
-				state = district.getState();
-			}
-
-			if (state != null) {
-				stateField.setValue(state.getName());
-			}
-
-			if (student.getPermanentAddress() != null) {
-				addressField.setValue(student.getPermanentAddress());
-			}
-
-			if (student.getPermanentPinCode() != null) {
-				pincodeField.setValue(student.getPermanentPinCode());
-			}
-
-		} else if (addressType == AddressType.Correspondence) {
+		} else if (addressType == Address.Type.Correspondence) {
 			typeField.setValue("Correspondence");
-		} else if (addressType == AddressType.Local_Guardian) {
+
+		} else if (addressType == Address.Type.Local_Guardian) {
 			typeField.setValue("Local guardian");
 		}
 
-	}
+		if (address.getDistrict() != null) {
+			districtField.setValue(address.getDistrict().getName());
+		}
 
+		if (address.getState() != null) {
+			stateField.setValue(address.getState().getName());
+		}
+
+		if (address.getAddress() != null) {
+			addressField.setValue(address.getAddress());
+		}
+
+		if (address.getPinCode() != null) {
+			pincodeField.setValue(address.getPinCode());
+		}
+	}
 }

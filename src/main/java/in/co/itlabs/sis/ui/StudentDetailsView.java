@@ -62,7 +62,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 
 		setSizeFull();
 		setPadding(false);
-		setAlignItems(Alignment.START);
+		setAlignItems(Alignment.CENTER);
 
 //		newStudentForm = new NewStudentForm(academicService,studentService);
 		studentCard = new StudentCard(academicService, studentService);

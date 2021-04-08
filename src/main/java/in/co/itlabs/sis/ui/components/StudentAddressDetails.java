@@ -2,12 +2,11 @@ package in.co.itlabs.sis.ui.components;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout.FlexWrap;
 
+import in.co.itlabs.sis.business.entities.Address;
 import in.co.itlabs.sis.business.entities.Student;
-import in.co.itlabs.sis.business.helpers.AddressType;
 import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
 
@@ -23,10 +22,7 @@ public class StudentAddressDetails extends VerticalLayout {
 	private AddressService addressService;
 	private StudentService studentService;
 
-//	private StudentGenderEditor genderEditor;
 	private Dialog dialog;
-
-//	private final List<String> messages = new ArrayList<>();
 
 	public StudentAddressDetails(StudentService studentService, AddressService addressService) {
 
@@ -39,13 +35,13 @@ public class StudentAddressDetails extends VerticalLayout {
 		dialog = new Dialog();
 		configureDialog();
 
-		permanentAddressCard = new AddressCard(studentService, addressService, AddressType.Permanent);
+		permanentAddressCard = new AddressCard(addressService, studentService, Address.Type.Permanent);
 		configureAddressCard(permanentAddressCard);
 
-		correspondenceAddressCard = new AddressCard(studentService, addressService, AddressType.Correspondence);
+		correspondenceAddressCard = new AddressCard(addressService, studentService, Address.Type.Correspondence);
 		configureAddressCard(correspondenceAddressCard);
 
-		localGuardianAddressCard = new AddressCard(studentService, addressService, AddressType.Local_Guardian);
+		localGuardianAddressCard = new AddressCard(addressService, studentService, Address.Type.Local_Guardian);
 		configureAddressCard(localGuardianAddressCard);
 
 		FlexLayout flex = new FlexLayout();
@@ -63,7 +59,6 @@ public class StudentAddressDetails extends VerticalLayout {
 
 	private void configureFlex(FlexLayout flexLayout) {
 		flexLayout.setFlexWrap(FlexWrap.WRAP);
-//		flexLayout.setAlignItems(Alignment.END);
 		flexLayout.getElement().getStyle().set("padding", "2px");
 		flexLayout.getElement().getStyle().set("gap", "2px");
 
@@ -93,8 +88,4 @@ public class StudentAddressDetails extends VerticalLayout {
 		localGuardianAddressCard.setStudentId(id);
 	}
 
-//	private void handleGenderUpdatedEvent(StudentGenderEditor.GenderUpdatedEvent event) {
-//		Notification.show("Student '" + event.getStudent().getName() + "' updated.", 3000, Position.TOP_CENTER);
-//		reload();
-//	}
 }

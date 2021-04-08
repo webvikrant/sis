@@ -74,6 +74,8 @@ public class Student {
 	// transient fields
 	private Session session;
 	private Program program;
+	private State state;
+	private District district;
 	private District permanentDistrict;
 	private District correspondenceDistrict;
 	private District localGuardianDistrict;

@@ -1,8 +1,5 @@
 package in.co.itlabs.sis.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -15,25 +12,22 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
+import in.co.itlabs.sis.business.entities.Address;
+import in.co.itlabs.sis.business.entities.District;
 import in.co.itlabs.sis.business.entities.State;
-import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AddressService;
-import in.co.itlabs.sis.business.services.StudentService;
 
-public class StudentStateEditor extends VerticalLayout {
+public class DistrictStateEditor extends VerticalLayout {
 
 	private ComboBox<State> stateCombo;
+	private ComboBox<District> districtCombo;
 
-	private Binder<Student> binder;
+	private Binder<Address> binder;
 
-	private StudentService studentService;
 	private AddressService addressService;
 
-	private final List<String> messages = new ArrayList<>();
+	public DistrictStateEditor(AddressService addressService) {
 
-	public StudentStateEditor(StudentService studentService, AddressService addressService) {
-
-		this.studentService = studentService;
 		this.addressService = addressService;
 
 		setPadding(false);
@@ -41,26 +35,43 @@ public class StudentStateEditor extends VerticalLayout {
 		stateCombo = new ComboBox<State>("State");
 		configureStateCombo();
 
-		binder = new Binder<>(Student.class);
+		districtCombo = new ComboBox<District>("District");
+		configureDistrictCombo();
+
+		binder = new Binder<>(Address.class);
 
 		binder.forField(stateCombo).asRequired("State can not be blank").bind("state");
+		binder.forField(districtCombo).asRequired("District can not be blank").bind("district");
 
 		var actionBar = buildActionBar();
 
-		add(stateCombo, actionBar);
+		add(stateCombo, districtCombo, actionBar);
 
 	}
 
 	private void configureStateCombo() {
 		stateCombo.setWidthFull();
-		stateCombo.setItemLabelGenerator(program -> {
-			return program.getName();
+		stateCombo.setItemLabelGenerator(state -> {
+			return state.getName();
 		});
 		stateCombo.setItems(addressService.getAllStates());
+		stateCombo.addValueChangeListener(event -> {
+			districtCombo.clear();
+			if (event.getValue() != null) {
+				districtCombo.setItems(addressService.getDistricts(event.getValue().getId()));
+			}
+		});
 	}
 
-	public void setStudent(Student student) {
-		binder.setBean(student);
+	private void configureDistrictCombo() {
+		districtCombo.setWidthFull();
+		districtCombo.setItemLabelGenerator(district -> {
+			return district.getName();
+		});
+	}
+
+	public void setAddress(Address address) {
+		binder.setBean(address);
 		stateCombo.focus();
 	}
 
@@ -72,15 +83,7 @@ public class StudentStateEditor extends VerticalLayout {
 		submitButton.addClickListener(event -> {
 
 			if (binder.validate().isOk()) {
-				messages.clear();
-//				boolean success = studentService.updateStudentProgram(messages, binder.getBean().getId(),
-//						binder.getBean().getProgram().getId());
-//
-//				if (success) {
-//					fireEvent(new ProgramUpdatedEvent(this, binder.getBean()));
-//				} else {
-//					Notification.show(messages.toString(), 3000, Position.TOP_CENTER);
-//				}
+				fireEvent(new SaveEvent(this, binder.getBean()));
 			}
 
 		});
@@ -97,23 +100,23 @@ public class StudentStateEditor extends VerticalLayout {
 		return root;
 	}
 
-	public static abstract class StudentEvent extends ComponentEvent<StudentStateEditor> {
-		private Student student;
+	public static abstract class AddressEvent extends ComponentEvent<DistrictStateEditor> {
+		private Address address;
 
-		protected StudentEvent(StudentStateEditor source, Student student) {
+		protected AddressEvent(DistrictStateEditor source, Address address) {
 
 			super(source, false);
-			this.student = student;
+			this.address = address;
 		}
 
-		public Student getStudent() {
-			return student;
+		public Address getAddress() {
+			return address;
 		}
 	}
 
-	public static class StateUpdatedEvent extends StudentEvent {
-		StateUpdatedEvent(StudentStateEditor source, Student student) {
-			super(source, student);
+	public static class SaveEvent extends AddressEvent {
+		SaveEvent(DistrictStateEditor source, Address address) {
+			super(source, address);
 		}
 	}
 

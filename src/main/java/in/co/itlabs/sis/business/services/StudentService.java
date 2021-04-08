@@ -43,23 +43,25 @@ public class StudentService {
 		Student student = null;
 
 		Sql2o sql2o = databaseService.getSql2o();
-		
+
 		String sql = "select * from student where id = :id";
 		String sessionSql = "select * from session where id = :id";
 		String programSql = "select * from program where id = :id";
-		
+
 		try (Connection con = sql2o.open()) {
 			student = con.createQuery(sql).addParameter("id", id).executeAndFetchFirst(Student.class);
-			
-			//fetch session
+
+			// fetch session
 			Session session = con.createQuery(sessionSql).addParameter("id", student.getSessionId())
 					.executeAndFetchFirst(Session.class);
 			student.setSession(session);
 
-			//fetch program
+			// fetch program
 			Program program = con.createQuery(programSql).addParameter("id", student.getProgramId())
 					.executeAndFetchFirst(Program.class);
 			student.setProgram(program);
+
+			con.close();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -80,16 +82,18 @@ public class StudentService {
 			students = con.createQuery(studentSql).executeAndFetch(Student.class);
 
 			for (Student student : students) {
-				//fetch session
+				// fetch session
 				Session session = con.createQuery(sessionSql).addParameter("id", student.getSessionId())
 						.executeAndFetchFirst(Session.class);
 				student.setSession(session);
 
-				//fetch program
+				// fetch program
 				Program program = con.createQuery(programSql).addParameter("id", student.getProgramId())
 						.executeAndFetchFirst(Program.class);
 				student.setProgram(program);
 			}
+
+			con.close();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -107,6 +111,8 @@ public class StudentService {
 		try (Connection con = sql2o.open()) {
 			con.createQuery(sql).addParameter("id", studentId).addParameter("birthDate", birthDate).executeUpdate();
 			success = true;
+
+			con.close();
 		}
 
 		return success;
@@ -121,6 +127,8 @@ public class StudentService {
 		try (Connection con = sql2o.open()) {
 			con.createQuery(sql).addParameter("id", studentId).addParameter("name", name).executeUpdate();
 			success = true;
+
+			con.close();
 		}
 
 		return success;
@@ -135,11 +143,13 @@ public class StudentService {
 		try (Connection con = sql2o.open()) {
 			con.createQuery(sql).addParameter("id", studentId).addParameter("programId", programId).executeUpdate();
 			success = true;
+
+			con.close();
 		}
 
 		return success;
 	}
-	
+
 	public boolean updateStudentGender(List<String> messages, int studentId, Gender gender) {
 		boolean success = false;
 
@@ -149,6 +159,56 @@ public class StudentService {
 		try (Connection con = sql2o.open()) {
 			con.createQuery(sql).addParameter("id", studentId).addParameter("gender", gender).executeUpdate();
 			success = true;
+
+			con.close();
+		}
+
+		return success;
+	}
+
+	public boolean updateStudentPermanentDistrict(List<String> messages, int studentId, int districtId) {
+		boolean success = false;
+
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "update student set  permanentDistrictId = :districtId where id = :id";
+
+		try (Connection con = sql2o.open()) {
+			con.createQuery(sql).addParameter("id", studentId).addParameter("districtId", districtId).executeUpdate();
+			success = true;
+
+			con.close();
+		}
+
+		return success;
+	}
+
+	public boolean updateStudentCorrespondenceDistrict(List<String> messages, int studentId, int districtId) {
+		boolean success = false;
+
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "update student set  correspondenceDistrictId = :districtId where id = :id";
+
+		try (Connection con = sql2o.open()) {
+			con.createQuery(sql).addParameter("id", studentId).addParameter("districtId", districtId).executeUpdate();
+			success = true;
+
+			con.close();
+		}
+
+		return success;
+	}
+
+	public boolean updateStudentLocalGuardianDistrict(List<String> messages, int studentId, int districtId) {
+		boolean success = false;
+
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "update student set  localGuardianDistrictId = :districtId where id = :id";
+
+		try (Connection con = sql2o.open()) {
+			con.createQuery(sql).addParameter("id", studentId).addParameter("districtId", districtId).executeUpdate();
+			success = true;
+
+			con.close();
 		}
 
 		return success;

@@ -48,7 +48,7 @@ public class StudentsView extends VerticalLayout {
 
 		setSizeFull();
 		setPadding(false);
-		setAlignItems(Alignment.START);
+		setAlignItems(Alignment.CENTER);
 
 //		title bar
 		var titleBar = buildTitleBar();
