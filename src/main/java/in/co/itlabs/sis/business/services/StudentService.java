@@ -166,6 +166,22 @@ public class StudentService {
 		return success;
 	}
 
+	public boolean updateStudentMobileNo(List<String> messages, int studentId, String mobileNo) {
+		boolean success = false;
+
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "update student set mobileNo = :mobileNo where id = :id";
+
+		try (Connection con = sql2o.open()) {
+			con.createQuery(sql).addParameter("id", studentId).addParameter("mobileNo", mobileNo).executeUpdate();
+			success = true;
+
+			con.close();
+		}
+
+		return success;
+	}
+
 	public boolean updateStudentPermanentDistrict(List<String> messages, int studentId, int districtId) {
 		boolean success = false;
 

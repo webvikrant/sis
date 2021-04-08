@@ -6,7 +6,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout.FlexWrap;
 
 import in.co.itlabs.sis.business.entities.Address;
-import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
 
@@ -17,17 +16,17 @@ public class StudentAddressDetails extends VerticalLayout {
 	private AddressCard localGuardianAddressCard;
 
 	private int id;
-	private Student student;
+//	private Student student;
 
-	private AddressService addressService;
-	private StudentService studentService;
+//	private AddressService addressService;
+//	private StudentService studentService;
 
 	private Dialog dialog;
 
 	public StudentAddressDetails(StudentService studentService, AddressService addressService) {
 
-		this.studentService = studentService;
-		this.addressService = addressService;
+//		this.studentService = studentService;
+//		this.addressService = addressService;
 
 		setPadding(false);
 		setSpacing(false);
@@ -82,7 +81,7 @@ public class StudentAddressDetails extends VerticalLayout {
 	}
 
 	private void reload() {
-		student = studentService.getStudentById(id);
+//		student = studentService.getStudentById(id);
 		permanentAddressCard.setStudentId(id);
 		correspondenceAddressCard.setStudentId(id);
 		localGuardianAddressCard.setStudentId(id);

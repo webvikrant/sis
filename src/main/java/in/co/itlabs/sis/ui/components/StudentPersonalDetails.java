@@ -39,8 +39,6 @@ public class StudentPersonalDetails extends VerticalLayout {
 		this.academicService = academicService;
 		this.studentService = studentService;
 
-		setSpacing(false);
-
 		dialog = new Dialog();
 		configureDialog();
 

@@ -141,7 +141,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 				personalDetails.setStudentId(studentId);
 			} else if (tab == contactTab) {
 				if (contactDetails == null) {
-					contactDetails = new StudentContactDetails(studentService, academicService);
+					contactDetails = new StudentContactDetails(studentService);
 				}
 				content.add(contactDetails);
 				contactDetails.setStudentId(studentId);
