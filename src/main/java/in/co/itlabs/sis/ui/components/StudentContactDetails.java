@@ -9,10 +9,10 @@ import in.co.itlabs.sis.business.services.StudentService;
 
 public class StudentContactDetails extends VerticalLayout {
 
-	private ContactCard studentContactCard;
-	private ContactCard motherContactCard;
-	private ContactCard fatherContactCard;
-	private ContactCard localGuardianContactCard;
+	private ContactComponent studentContactCard;
+	private ContactComponent motherContactCard;
+	private ContactComponent fatherContactCard;
+	private ContactComponent localGuardianContactCard;
 
 	private int id;
 //	private Student student;
@@ -26,16 +26,16 @@ public class StudentContactDetails extends VerticalLayout {
 		dialog = new Dialog();
 		configureDialog();
 
-		studentContactCard = new ContactCard(studentService, Contact.Type.Student);
+		studentContactCard = new ContactComponent(studentService, Contact.Type.Student);
 		configureContactCard(studentContactCard);
 
-		motherContactCard = new ContactCard(studentService, Contact.Type.Mother);
+		motherContactCard = new ContactComponent(studentService, Contact.Type.Mother);
 		configureContactCard(motherContactCard);
 
-		fatherContactCard = new ContactCard(studentService, Contact.Type.Father);
+		fatherContactCard = new ContactComponent(studentService, Contact.Type.Father);
 		configureContactCard(fatherContactCard);
 
-		localGuardianContactCard = new ContactCard(studentService, Contact.Type.Local_Guardian);
+		localGuardianContactCard = new ContactComponent(studentService, Contact.Type.Local_Guardian);
 		configureContactCard(localGuardianContactCard);
 
 		add(studentContactCard, new Hr(), motherContactCard, new Hr(), fatherContactCard, new Hr(),
@@ -43,7 +43,7 @@ public class StudentContactDetails extends VerticalLayout {
 
 	}
 
-	private void configureContactCard(ContactCard contactCard) {
+	private void configureContactCard(ContactComponent contactCard) {
 //		contactCard.setWidth("230px");
 	}
 

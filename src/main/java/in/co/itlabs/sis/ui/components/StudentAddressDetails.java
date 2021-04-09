@@ -11,9 +11,9 @@ import in.co.itlabs.sis.business.services.StudentService;
 
 public class StudentAddressDetails extends VerticalLayout {
 
-	private AddressCard permanentAddressCard;
-	private AddressCard correspondenceAddressCard;
-	private AddressCard localGuardianAddressCard;
+	private AddressComponent permanentAddressCard;
+	private AddressComponent correspondenceAddressCard;
+	private AddressComponent localGuardianAddressCard;
 
 	private int id;
 //	private Student student;
@@ -34,13 +34,13 @@ public class StudentAddressDetails extends VerticalLayout {
 		dialog = new Dialog();
 		configureDialog();
 
-		permanentAddressCard = new AddressCard(addressService, studentService, Address.Type.Permanent);
+		permanentAddressCard = new AddressComponent(addressService, studentService, Address.Type.Permanent);
 		configureAddressCard(permanentAddressCard);
 
-		correspondenceAddressCard = new AddressCard(addressService, studentService, Address.Type.Correspondence);
+		correspondenceAddressCard = new AddressComponent(addressService, studentService, Address.Type.Correspondence);
 		configureAddressCard(correspondenceAddressCard);
 
-		localGuardianAddressCard = new AddressCard(addressService, studentService, Address.Type.Local_Guardian);
+		localGuardianAddressCard = new AddressComponent(addressService, studentService, Address.Type.Local_Guardian);
 		configureAddressCard(localGuardianAddressCard);
 
 		FlexLayout flex = new FlexLayout();
@@ -52,15 +52,14 @@ public class StudentAddressDetails extends VerticalLayout {
 
 	}
 
-	private void configureAddressCard(AddressCard addressCard) {
+	private void configureAddressCard(AddressComponent addressCard) {
 		addressCard.setWidth("230px");
 	}
 
 	private void configureFlex(FlexLayout flexLayout) {
 		flexLayout.setFlexWrap(FlexWrap.WRAP);
-		flexLayout.getElement().getStyle().set("padding", "2px");
-		flexLayout.getElement().getStyle().set("gap", "2px");
-
+		flexLayout.getElement().getStyle().set("padding", "8px");
+		flexLayout.getElement().getStyle().set("gap", "8px");
 	}
 
 	public void setStudentId(int id) {

@@ -167,11 +167,11 @@ public class StudentsView extends VerticalLayout {
 		grid.addColumn("programId");
 		grid.addColumn("stage");
 
-		grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
 		grid.addComponentColumn(item -> {
 			return new Anchor("student-details/" + item.getId(), "Details");
 		}).setHeader("Details");
+
+		grid.getColumns().forEach(col -> col.setAutoWidth(true));
 	}
 
 	private void handleStudentCreatedEvent(NewStudentForm.StudentCreatedEvent event) {

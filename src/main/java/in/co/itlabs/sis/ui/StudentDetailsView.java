@@ -21,6 +21,7 @@ import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.StudentPersonalDetails;
 import in.co.itlabs.sis.ui.components.StudentAddressDetails;
+import in.co.itlabs.sis.ui.components.StudentAdmissionDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
 import in.co.itlabs.sis.ui.components.StudentContactDetails;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
@@ -39,7 +40,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private Tab personalTab;
 	private Tab contactTab;
 	private Tab addressTab;
-	private Tab academicTab;
+	private Tab admissionTab;
+	private Tab progressTab;
 	private Tab scholarshipTab;
 	private Tab documentsTab;
 
@@ -47,6 +49,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private StudentPersonalDetails personalDetails;
 	private StudentContactDetails contactDetails;
 	private StudentAddressDetails addressDetails;
+	private StudentAdmissionDetails admissionDetails;
 
 //	private Dialog dialog;
 
@@ -72,7 +75,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		personalTab = new Tab("Personal");
 		contactTab = new Tab("Contact");
 		addressTab = new Tab("Address");
-		academicTab = new Tab("Academic");
+		admissionTab = new Tab("Admission");
+		progressTab = new Tab("Progress");
 		scholarshipTab = new Tab("Scholarship");
 		documentsTab = new Tab("Documents");
 
@@ -125,7 +129,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		tabs.add(personalTab);
 		tabs.add(contactTab);
 		tabs.add(addressTab);
-		tabs.add(academicTab);
+		tabs.add(admissionTab);
+		tabs.add(progressTab);
 		tabs.add(scholarshipTab);
 		tabs.add(documentsTab);
 
@@ -152,6 +157,13 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 				}
 				content.add(addressDetails);
 				addressDetails.setStudentId(studentId);
+
+			} else if (tab == admissionTab) {
+				if (admissionDetails == null) {
+					admissionDetails = new StudentAdmissionDetails(studentService, academicService);
+				}
+				content.add(admissionDetails);
+				admissionDetails.setStudentId(studentId);
 
 			} else if (tab == scholarshipTab) {
 

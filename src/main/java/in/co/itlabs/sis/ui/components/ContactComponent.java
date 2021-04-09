@@ -12,7 +12,7 @@ import in.co.itlabs.sis.business.entities.Contact.Type;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.StudentService;
 
-public class ContactCard extends FlexLayout {
+public class ContactComponent extends FlexLayout {
 
 	private TextField typeField;
 	private TextField mobileNoField;
@@ -31,7 +31,7 @@ public class ContactCard extends FlexLayout {
 
 	private final List<String> messages = new ArrayList<>();
 
-	public ContactCard(StudentService studentService, Contact.Type contactType) {
+	public ContactComponent(StudentService studentService, Contact.Type contactType) {
 
 		getElement().getStyle().set("padding", "8px");
 		getElement().getStyle().set("gap", "8px");

@@ -15,7 +15,7 @@ import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
 
-public class AddressCard extends VerticalLayout {
+public class AddressComponent extends VerticalLayout {
 
 	private TextField typeField;
 	private TextField stateField;
@@ -36,7 +36,7 @@ public class AddressCard extends VerticalLayout {
 
 	private final List<String> messages = new ArrayList<>();
 
-	public AddressCard(AddressService addressService, StudentService studentService, Address.Type addressType) {
+	public AddressComponent(AddressService addressService, StudentService studentService, Address.Type addressType) {
 		this.addressService = addressService;
 		this.studentService = studentService;
 		this.addressType = addressType;

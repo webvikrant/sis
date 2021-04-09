@@ -34,7 +34,7 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		setFlexDirection(FlexDirection.ROW);
 		setJustifyContentMode(JustifyContentMode.CENTER);
 		setAlignItems(Alignment.STRETCH);
-		setHeightFull();
+//		setHeightFull();
 
 		VerticalLayout root = new VerticalLayout();
 		root.setWidth("1000px");
