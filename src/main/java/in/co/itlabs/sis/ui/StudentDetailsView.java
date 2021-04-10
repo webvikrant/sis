@@ -6,6 +6,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -18,12 +19,14 @@ import com.vaadin.flow.router.Route;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.AddressService;
+import in.co.itlabs.sis.business.services.MediaService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.StudentPersonalDetails;
 import in.co.itlabs.sis.ui.components.StudentAddressDetails;
 import in.co.itlabs.sis.ui.components.StudentAdmissionDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
 import in.co.itlabs.sis.ui.components.StudentContactDetails;
+import in.co.itlabs.sis.ui.components.StudentMediaFiles;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
 @PageTitle(value = "Student details")
@@ -33,6 +36,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private StudentService studentService;
 	private AcademicService academicService;
 	private AddressService addressService;
+	private MediaService mediaService;
 
 //	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
@@ -43,13 +47,14 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private Tab admissionTab;
 	private Tab progressTab;
 	private Tab scholarshipTab;
-	private Tab documentsTab;
+	private Tab mediaTab;
 
 	private VerticalLayout content;
 	private StudentPersonalDetails personalDetails;
 	private StudentContactDetails contactDetails;
 	private StudentAddressDetails addressDetails;
 	private StudentAdmissionDetails admissionDetails;
+	private StudentMediaFiles mediaFiles;
 
 //	private Dialog dialog;
 
@@ -57,12 +62,15 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 
 	@Autowired
 	public StudentDetailsView(StudentService studentService, AcademicService academicService,
-			AddressService addressService) {
+			AddressService addressService, MediaService mediaService) {
 
 		this.studentService = studentService;
 		this.academicService = academicService;
 		this.addressService = addressService;
+		this.mediaService = mediaService;
 
+		setSizeFull();
+		setPadding(false);
 		setAlignItems(Alignment.CENTER);
 
 //		newStudentForm = new NewStudentForm(academicService,studentService);
@@ -76,7 +84,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		admissionTab = new Tab("Admission");
 		progressTab = new Tab("Progress");
 		scholarshipTab = new Tab("Scholarship");
-		documentsTab = new Tab("Documents");
+		mediaTab = new Tab("Media");
 
 		content = new VerticalLayout();
 
@@ -130,7 +138,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		tabs.add(admissionTab);
 		tabs.add(progressTab);
 		tabs.add(scholarshipTab);
-		tabs.add(documentsTab);
+		tabs.add(mediaTab);
 
 		tabs.addSelectedChangeListener(event -> {
 			content.removeAll();
@@ -164,6 +172,13 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 				admissionDetails.setStudentId(studentId);
 
 			} else if (tab == scholarshipTab) {
+
+			} else if (tab == mediaTab) {
+				if (mediaFiles == null) {
+					mediaFiles = new StudentMediaFiles(studentService, mediaService);
+				}
+				content.add(mediaFiles);
+				mediaFiles.setStudentId(studentId);
 
 			}
 		});

@@ -80,4 +80,8 @@ public class Student {
 	private District correspondenceDistrict;
 	private District localGuardianDistrict;
 
+	public void clear() {
+		name = null;
+		admissionId = null;
+	}
 }

@@ -1,5 +1,8 @@
 package in.co.itlabs.sis.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.button.Button;
@@ -12,18 +15,19 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
-import in.co.itlabs.sis.ui.components.NewStudentForm;
 import in.co.itlabs.sis.ui.components.StudentFilterForm;
+import in.co.itlabs.sis.ui.components.editors.NewStudentEditor;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
 @PageTitle(value = "Students")
@@ -35,17 +39,23 @@ public class StudentsView extends VerticalLayout {
 
 	private final Grid<Student> grid = new Grid<>(Student.class);
 
-	private NewStudentForm newStudentForm;
+	private NewStudentEditor newStudentEditor;
+	private Student student;
 	private Dialog dialog;
+
+	private final List<String> messages = new ArrayList<>();
 
 	@Autowired
 	public StudentsView(AcademicService academicService, StudentService studentService) {
 		this.academicService = academicService;
 		this.studentService = studentService;
 
-		newStudentForm = new NewStudentForm(academicService, studentService);
+		student = new Student();
+		newStudentEditor = new NewStudentEditor(academicService);
 		dialog = new Dialog();
 
+		setSizeFull();
+		setPadding(false);
 		setAlignItems(Alignment.CENTER);
 
 //		title bar
@@ -68,7 +78,8 @@ public class StudentsView extends VerticalLayout {
 
 		configureDialog();
 
-		newStudentForm.addListener(NewStudentForm.StudentCreatedEvent.class, this::handleStudentCreatedEvent);
+		newStudentEditor.addListener(NewStudentEditor.SaveEvent.class, this::handleSaveEvent);
+		newStudentEditor.addListener(NewStudentEditor.CancelEvent.class, this::handleCancelEvent);
 
 		reload();
 	}
@@ -82,25 +93,9 @@ public class StudentsView extends VerticalLayout {
 
 	private void configureDialog() {
 		// TODO Auto-generated method stub
-		Span title = new Span("New Student");
-		Button closeButton = new Button(VaadinIcon.CLOSE.create());
-		closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		closeButton.addClickListener(event -> {
-			dialog.close();
-		});
-
-		FlexLayout titleBar = new FlexLayout();
-		titleBar.setJustifyContentMode(JustifyContentMode.BETWEEN);
-		titleBar.setWidthFull();
-		titleBar.setAlignItems(Alignment.CENTER);
-		titleBar.add(title, closeButton);
-
-		dialog.add(titleBar, newStudentForm);
-
 		dialog.setWidth("300px");
 		dialog.setModal(true);
 		dialog.setDraggable(true);
-		dialog.setCloseOnOutsideClick(false);
 	}
 
 	private VerticalLayout buildFilterComponent() {
@@ -133,7 +128,10 @@ public class StudentsView extends VerticalLayout {
 		Button createButton = new Button("New", VaadinIcon.PLUS.create());
 		createButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 		createButton.addClickListener(event -> {
+			dialog.removeAll();
+			dialog.add(newStudentEditor);
 			dialog.open();
+			newStudentEditor.setStudent(student);
 		});
 
 		Span space = new Span();
@@ -162,7 +160,15 @@ public class StudentsView extends VerticalLayout {
 			return value;
 		}).setHeader("Session");
 
-		grid.addColumn("programId");
+		grid.addColumn(student -> {
+			String value = "";
+			Program program = student.getProgram();
+			if (program != null) {
+				value = program.getName();
+			}
+			return value;
+		}).setHeader("Program");
+
 		grid.addColumn("stage");
 
 		grid.addComponentColumn(item -> {
@@ -172,9 +178,22 @@ public class StudentsView extends VerticalLayout {
 		grid.getColumns().forEach(col -> col.setAutoWidth(true));
 	}
 
-	private void handleStudentCreatedEvent(NewStudentForm.StudentCreatedEvent event) {
-		Notification.show("Student '" + event.getStudent().getName() + "' created.", 3000, Position.TOP_CENTER);
-		reload();
+	public void handleSaveEvent(NewStudentEditor.SaveEvent event) {
+		Student student = event.getStudent();
+		messages.clear();
+		int id = studentService.createStudent(messages, student);
+		if (id > 0) {
+			Notification.show("Student created successfully", 3000, Position.TOP_CENTER);
+			student.clear();
+			newStudentEditor.setStudent(student);
+			reload();
+		} else {
+			Notification.show(messages.toString(), 3000, Position.TOP_CENTER);
+		}
+	}
+
+	public void handleCancelEvent(NewStudentEditor.CancelEvent event) {
+		dialog.close();
 	}
 
 	private void reload() {

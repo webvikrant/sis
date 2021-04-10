@@ -26,19 +26,22 @@ public class StudentService {
 	}
 
 	// create
-//	public int createStudent(Student student) {
-//		int id = 0;
-//		try {
-//			ConnectionSource connectionSource = databaseService.getConnectioSource();
-//			Dao<Student, Integer> studentDao = DaoManager.createDao(connectionSource, Student.class);
-//			studentDao.create(student);
-//			id = student.getId();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return id;
-//	}
+	public int createStudent(List<String> messages, Student student) {
+		int id = 0;
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "insert into student (admissionId, name, sessionId)" + " values(:admissionId, :name, :sessionId)";
+
+		try (Connection con = sql2o.open()) {
+			id = con.createQuery(sql).addParameter("admissionId", student.getAdmissionId())
+					.addParameter("name", student.getName()).addParameter("sessionId", student.getSessionId())
+					.executeUpdate().getKey(Integer.class);
+
+			con.close();
+		} catch (Exception e) {
+			messages.add(e.getMessage());
+		}
+		return id;
+	}
 
 	// read one
 	public Student getStudentById(int id) {

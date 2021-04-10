@@ -1,4 +1,4 @@
-package in.co.itlabs.sis.ui.components;
+package in.co.itlabs.sis.ui.components.editors;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -7,38 +7,35 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 
 import in.co.itlabs.sis.business.entities.Session;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
-import in.co.itlabs.sis.business.services.StudentService;
 
-public class NewStudentForm extends VerticalLayout {
+public class NewStudentEditor extends VerticalLayout implements Editor {
 
 	private ComboBox<Session> sessionCombo;
 	private TextField admissionIdField;
 	private TextField nameField;
 
+	private Button saveButton;
+	private Button cancelButton;
+
 	private Binder<Student> binder;
 
 	private AcademicService academicService;
-	private StudentService studentService;
 
-	public NewStudentForm(AcademicService academicService, StudentService studentService) {
+	public NewStudentEditor(AcademicService academicService) {
 
 		this.academicService = academicService;
-		this.studentService = studentService;
-
+		
 		setPadding(false);
-
+		
 		sessionCombo = new ComboBox<Session>("Session");
 		configureSessionCombo();
 
@@ -50,11 +47,15 @@ public class NewStudentForm extends VerticalLayout {
 
 		binder = new Binder<>(Student.class);
 
-//		binder.forField(sessionCombo).asRequired("Session can not be blank").bind("session");
+		binder.forField(sessionCombo).asRequired("Session can not be blank").bind("session");
 		binder.forField(admissionIdField).asRequired("Admission Id can not be blank").bind("admissionId");
 		binder.forField(nameField).asRequired("Name can not be blank").bind("name");
 
-		var actionBar = buildActionBar();
+		saveButton = new Button("OK", VaadinIcon.CHECK.create());
+		cancelButton = new Button("Cancel", VaadinIcon.CLOSE.create());
+
+		HorizontalLayout actionBar = buildActionBar();
+		actionBar.setWidthFull();
 
 		add(sessionCombo, admissionIdField, nameField, actionBar);
 
@@ -71,38 +72,41 @@ public class NewStudentForm extends VerticalLayout {
 
 		sessionCombo.setItems(academicService.getAllSessions());
 	}
+	
+	public void setStudent(Student student) {
+		binder.setBean(student);
+	}
 
 	private HorizontalLayout buildActionBar() {
-		Button submitButton = new Button("OK", VaadinIcon.CHECK.create());
-		submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		submitButton.addClickListener(event -> {
-			try {
-				Student student = new Student();
-				binder.writeBean(student);
-//				studentService.createStudent(student);
-				fireEvent(new StudentCreatedEvent(this, student));
+		HorizontalLayout root = new HorizontalLayout();
 
-			} catch (ValidationException e) {
-				Notification.show(e.getMessage(), 3000, Position.TOP_CENTER);
+		saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		saveButton.addClickListener(e -> {
+			if (binder.validate().isOk()) {
+
+				binder.getBean().setSessionId(binder.getBean().getSession().getId());
+
+				fireEvent(new SaveEvent(this, binder.getBean()));
 			}
 		});
 
-		Button resetButton = new Button("Reset", VaadinIcon.CLOSE.create());
+		cancelButton.addClickListener(e -> {
+			fireEvent(new CancelEvent(this, binder.getBean()));
+		});
 
 		Span blank = new Span();
 
-		HorizontalLayout root = new HorizontalLayout();
-		root.setWidthFull();
-		root.add(submitButton, blank, resetButton);
+		root.add(saveButton, blank, cancelButton);
 		root.expand(blank);
 
 		return root;
 	}
 
-	public static abstract class StudentEvent extends ComponentEvent<NewStudentForm> {
+
+	public static abstract class StudentEvent extends ComponentEvent<NewStudentEditor> {
 		private Student student;
 
-		protected StudentEvent(NewStudentForm source, Student student) {
+		protected StudentEvent(NewStudentEditor source, Student student) {
 
 			super(source, false);
 			this.student = student;
@@ -113,8 +117,14 @@ public class NewStudentForm extends VerticalLayout {
 		}
 	}
 
-	public static class StudentCreatedEvent extends StudentEvent {
-		StudentCreatedEvent(NewStudentForm source, Student student) {
+	public static class SaveEvent extends StudentEvent {
+		SaveEvent(NewStudentEditor source, Student student) {
+			super(source, student);
+		}
+	}
+
+	public static class CancelEvent extends StudentEvent {
+		CancelEvent(NewStudentEditor source, Student student) {
 			super(source, student);
 		}
 	}
@@ -123,5 +133,16 @@ public class NewStudentForm extends VerticalLayout {
 			ComponentEventListener<T> listener) {
 
 		return getEventBus().addListener(eventType, listener);
+	}
+
+	@Override
+	public void setEditingEnabled(boolean enabled) {
+//		typeCombo.setReadOnly(!enabled);
+		sessionCombo.setReadOnly(!enabled);
+		admissionIdField.setReadOnly(!enabled);
+		nameField.setReadOnly(!enabled);
+
+		saveButton.setVisible(enabled);
+		cancelButton.setVisible(enabled);
 	}
 }
