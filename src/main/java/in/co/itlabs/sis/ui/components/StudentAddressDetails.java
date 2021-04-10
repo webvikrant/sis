@@ -16,6 +16,7 @@ import in.co.itlabs.sis.business.entities.District;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.StudentService;
+import in.co.itlabs.sis.ui.components.editors.AddressEditor;
 
 public class StudentAddressDetails extends VerticalLayout {
 

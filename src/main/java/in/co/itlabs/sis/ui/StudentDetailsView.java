@@ -66,7 +66,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		setAlignItems(Alignment.CENTER);
 
 //		newStudentForm = new NewStudentForm(academicService,studentService);
-		studentCard = new StudentCard(academicService, studentService);
+		studentCard = new StudentCard(studentService);
 
 		tabs = new Tabs();
 
@@ -138,7 +138,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 			Tab tab = event.getSelectedTab();
 			if (tab == personalTab) {
 				if (personalDetails == null) {
-					personalDetails = new StudentPersonalDetails(studentService, academicService);
+					personalDetails = new StudentPersonalDetails(studentService);
 				}
 				content.add(personalDetails);
 				personalDetails.setStudentId(studentId);

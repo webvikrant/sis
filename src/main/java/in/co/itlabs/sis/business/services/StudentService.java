@@ -9,6 +9,7 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
 import in.co.itlabs.sis.business.entities.Address;
+import in.co.itlabs.sis.business.entities.Contact;
 import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Session;
 import in.co.itlabs.sis.business.entities.Student;
@@ -167,22 +168,29 @@ public class StudentService {
 		return success;
 	}
 
-	public boolean updateStudentMobileNo(List<String> messages, int studentId, String mobileNo) {
+	// update contact details
+	public boolean updateStudentContactDetails(List<String> messages, Contact contact) {
 		boolean success = false;
 
 		Sql2o sql2o = databaseService.getSql2o();
-		String sql = "update student set mobileNo = :mobileNo where id = :id";
+		String sql = "update student set" + " mobileNo = :mobileNo," + " whatsappNo = :whatsappNo,"
+				+ " emailId = :emailId where id = :id";
 
 		try (Connection con = sql2o.open()) {
-			con.createQuery(sql).addParameter("id", studentId).addParameter("mobileNo", mobileNo).executeUpdate();
+			con.createQuery(sql).addParameter("id", contact.getStudentId())
+					.addParameter("mobileNo", contact.getMobileNo()).addParameter("whatsappNo", contact.getWhatsappNo())
+					.addParameter("emailId", contact.getEmailId()).executeUpdate();
 			success = true;
 
 			con.close();
+		} catch (Exception e) {
+			messages.add(e.getMessage());
 		}
 
 		return success;
 	}
 
+	// update address details
 	public boolean updateStudentPermanentAddressDetails(List<String> messages, Address address) {
 		boolean success = false;
 
@@ -197,6 +205,8 @@ public class StudentService {
 			success = true;
 
 			con.close();
+		} catch (Exception e) {
+			messages.add(e.getMessage());
 		}
 
 		return success;
@@ -216,6 +226,8 @@ public class StudentService {
 			success = true;
 
 			con.close();
+		} catch (Exception e) {
+			messages.add(e.getMessage());
 		}
 
 		return success;

@@ -1,15 +1,12 @@
 package in.co.itlabs.sis.ui.components;
 
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout.FlexWrap;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
 import in.co.itlabs.sis.business.entities.Student;
-import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 
 public class StudentPersonalDetails extends VerticalLayout {
@@ -27,16 +24,13 @@ public class StudentPersonalDetails extends VerticalLayout {
 	private int id;
 	private Student student;
 
-	private AcademicService academicService;
 	private StudentService studentService;
 
-	private StudentGenderEditor genderEditor;
 	private Dialog dialog;
 
 //	private final List<String> messages = new ArrayList<>();
 
-	public StudentPersonalDetails(StudentService studentService, AcademicService academicService) {
-		this.academicService = academicService;
+	public StudentPersonalDetails(StudentService studentService) {
 		this.studentService = studentService;
 
 		dialog = new Dialog();
@@ -104,16 +98,6 @@ public class StudentPersonalDetails extends VerticalLayout {
 	private void configureGenderField() {
 		genderField.setWidth("150px");
 		genderField.setReadOnly(true);
-		genderField.getElement().addEventListener("dblclick", e -> {
-			dialog.open();
-			if (genderEditor == null) {
-				genderEditor = new StudentGenderEditor(studentService, academicService);
-				genderEditor.addListener(StudentGenderEditor.GenderUpdatedEvent.class, this::handleGenderUpdatedEvent);
-			}
-			dialog.removeAll();
-			dialog.add(genderEditor);
-			genderEditor.setStudent(student);
-		});
 	}
 
 	private void configureMotherField() {
@@ -181,10 +165,5 @@ public class StudentPersonalDetails extends VerticalLayout {
 			genderField.setValue(student.getGender().toString());
 		}
 
-	}
-
-	private void handleGenderUpdatedEvent(StudentGenderEditor.GenderUpdatedEvent event) {
-		Notification.show("Student '" + event.getStudent().getName() + "' updated.", 3000, Position.TOP_CENTER);
-		reload();
 	}
 }

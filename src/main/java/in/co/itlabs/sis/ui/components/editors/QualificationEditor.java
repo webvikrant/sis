@@ -1,4 +1,4 @@
-package in.co.itlabs.sis.ui.components;
+package in.co.itlabs.sis.ui.components.editors;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -16,14 +16,14 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
-import in.co.itlabs.sis.business.entities.AcademicQualification;
+import in.co.itlabs.sis.business.entities.Qualification;
 import in.co.itlabs.sis.business.entities.Board;
 import in.co.itlabs.sis.business.entities.Exam;
 import in.co.itlabs.sis.business.entities.School;
 import in.co.itlabs.sis.business.entities.Exam.Level;
 import in.co.itlabs.sis.business.services.AcademicService;
 
-public class AcademicQualificationEditor extends VerticalLayout implements Editor {
+public class QualificationEditor extends VerticalLayout implements Editor {
 
 	private ComboBox<Level> levelCombo;
 	private ComboBox<Exam> examCombo;
@@ -38,11 +38,11 @@ public class AcademicQualificationEditor extends VerticalLayout implements Edito
 	private Button saveButton;
 	private Button cancelButton;
 
-	private Binder<AcademicQualification> binder;
+	private Binder<Qualification> binder;
 
 	private AcademicService academicService;
 
-	public AcademicQualificationEditor(AcademicService academicService) {
+	public QualificationEditor(AcademicService academicService) {
 		this.academicService = academicService;
 
 		levelCombo = new ComboBox<Level>("Level");
@@ -69,7 +69,7 @@ public class AcademicQualificationEditor extends VerticalLayout implements Edito
 		percentMarksField = new BigDecimalField("% Marks");
 		configurePercentMarksField();
 
-		binder = new Binder<>(AcademicQualification.class);
+		binder = new Binder<>(Qualification.class);
 
 		binder.forField(levelCombo).asRequired("Level can not be blank").bind("level");
 		binder.forField(examCombo).asRequired("Exam can not be blank").bind("exam");
@@ -149,7 +149,7 @@ public class AcademicQualificationEditor extends VerticalLayout implements Edito
 		schoolCombo.setItems(academicService.getAllSchools());
 	}
 
-	public void setAcademicQualification(AcademicQualification academicQualification) {
+	public void setAcademicQualification(Qualification academicQualification) {
 		binder.setBean(academicQualification);
 	}
 
@@ -186,29 +186,29 @@ public class AcademicQualificationEditor extends VerticalLayout implements Edito
 		return root;
 	}
 
-	public static abstract class AcademicQualificationEvent extends ComponentEvent<AcademicQualificationEditor> {
-		private AcademicQualification academicQualification;
+	public static abstract class AcademicQualificationEvent extends ComponentEvent<QualificationEditor> {
+		private Qualification academicQualification;
 
-		protected AcademicQualificationEvent(AcademicQualificationEditor source,
-				AcademicQualification academicQualification) {
+		protected AcademicQualificationEvent(QualificationEditor source,
+				Qualification academicQualification) {
 
 			super(source, false);
 			this.academicQualification = academicQualification;
 		}
 
-		public AcademicQualification getAcademicQualification() {
+		public Qualification getAcademicQualification() {
 			return academicQualification;
 		}
 	}
 
 	public static class SaveEvent extends AcademicQualificationEvent {
-		SaveEvent(AcademicQualificationEditor source, AcademicQualification academicQualification) {
+		SaveEvent(QualificationEditor source, Qualification academicQualification) {
 			super(source, academicQualification);
 		}
 	}
 
 	public static class CancelEvent extends AcademicQualificationEvent {
-		CancelEvent(AcademicQualificationEditor source, AcademicQualification academicQualification) {
+		CancelEvent(QualificationEditor source, Qualification academicQualification) {
 			super(source, academicQualification);
 		}
 	}

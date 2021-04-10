@@ -12,10 +12,11 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout.FlexWrap;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
-import in.co.itlabs.sis.business.entities.AcademicQualification;
+import in.co.itlabs.sis.business.entities.Qualification;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
+import in.co.itlabs.sis.ui.components.editors.QualificationEditor;
 
 public class StudentAdmissionDetails extends VerticalLayout {
 
@@ -42,7 +43,7 @@ public class StudentAdmissionDetails extends VerticalLayout {
 	private TextField pcbPercentField;
 
 	private Button createQualificationButton;
-	private Grid<AcademicQualification> grid;
+	private Grid<Qualification> grid;
 
 	private int studentId;
 	private Student student;
@@ -50,8 +51,8 @@ public class StudentAdmissionDetails extends VerticalLayout {
 	private StudentService studentService;
 	private AcademicService academicService;
 
-	private AcademicQualification academicQualification;
-	private AcademicQualificationEditor academicQualificationEditor;
+	private Qualification qualification;
+	private QualificationEditor qualificationEditor;
 	private Dialog dialog;
 
 	public StudentAdmissionDetails(StudentService studentService, AcademicService academicService) {
@@ -101,7 +102,7 @@ public class StudentAdmissionDetails extends VerticalLayout {
 		createQualificationButton = new Button("Add", VaadinIcon.PLUS.create());
 		configureCreateQualificationButton();
 
-		grid = new Grid<>(AcademicQualification.class);
+		grid = new Grid<>(Qualification.class);
 		configureGrid();
 
 		FlexLayout flex1 = new FlexLayout();
@@ -124,15 +125,15 @@ public class StudentAdmissionDetails extends VerticalLayout {
 		add(flex1, flex2, flex3, grid);
 
 		// dialog related
-		academicQualificationEditor = new AcademicQualificationEditor(academicService);
+		qualificationEditor = new QualificationEditor(academicService);
 
-		academicQualificationEditor.addListener(AcademicQualificationEditor.SaveEvent.class,
+		qualificationEditor.addListener(QualificationEditor.SaveEvent.class,
 				this::handleSaveAcademicQualificationEvent);
 
-		academicQualificationEditor.addListener(AcademicQualificationEditor.CancelEvent.class,
+		qualificationEditor.addListener(QualificationEditor.CancelEvent.class,
 				this::handleCloseAcademicQualificationEvent);
 
-		academicQualification = new AcademicQualification();
+		qualification = new Qualification();
 		dialog = new Dialog();
 		configureDialog();
 	}
@@ -206,10 +207,10 @@ public class StudentAdmissionDetails extends VerticalLayout {
 
 		createQualificationButton.addClickListener(e -> {
 			dialog.removeAll();
-			dialog.add(academicQualificationEditor);
+			dialog.add(qualificationEditor);
 			dialog.open();
-			academicQualification.setStudentId(studentId);
-			academicQualificationEditor.setAcademicQualification(academicQualification);
+			qualification.setStudentId(studentId);
+			qualificationEditor.setAcademicQualification(qualification);
 		});
 	}
 
@@ -225,8 +226,8 @@ public class StudentAdmissionDetails extends VerticalLayout {
 		reloadGrid();
 	}
 
-	public void handleSaveAcademicQualificationEvent(AcademicQualificationEditor.SaveEvent event) {
-		AcademicQualification academicQualification = event.getAcademicQualification();
+	public void handleSaveAcademicQualificationEvent(QualificationEditor.SaveEvent event) {
+		Qualification academicQualification = event.getAcademicQualification();
 
 		if (academicQualification.getId() == 0) {
 // 		create new
@@ -235,7 +236,7 @@ public class StudentAdmissionDetails extends VerticalLayout {
 				Notification.show("Qualification added successfully", 3000, Position.TOP_CENTER);
 				academicQualification.clear();
 				academicQualification.setStudentId(studentId);
-				academicQualificationEditor.setAcademicQualification(academicQualification);
+				qualificationEditor.setAcademicQualification(academicQualification);
 				reloadGrid();
 			}
 		} else {
@@ -245,7 +246,7 @@ public class StudentAdmissionDetails extends VerticalLayout {
 		}
 	}
 
-	public void handleCloseAcademicQualificationEvent(AcademicQualificationEditor.CancelEvent event) {
+	public void handleCloseAcademicQualificationEvent(QualificationEditor.CancelEvent event) {
 		dialog.close();
 	}
 

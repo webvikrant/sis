@@ -1,4 +1,4 @@
-package in.co.itlabs.sis.ui.components;
+package in.co.itlabs.sis.ui.components.editors;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;

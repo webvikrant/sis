@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
-import in.co.itlabs.sis.business.entities.AcademicQualification;
+import in.co.itlabs.sis.business.entities.Qualification;
 import in.co.itlabs.sis.business.entities.Board;
 import in.co.itlabs.sis.business.entities.Exam;
 import in.co.itlabs.sis.business.entities.Exam.Level;
@@ -121,7 +121,7 @@ public class AcademicService {
 
 	// academic qualification
 	// create
-	public int createAcademicQualification(AcademicQualification academicQualification) {
+	public int createAcademicQualification(Qualification academicQualification) {
 		int id = 0;
 		Sql2o sql2o = databaseService.getSql2o();
 		String sql = "insert into academic_qualification (studentId, level, examId, boardId, schoolId, year, rollNo, maximumMarks, obtainedMarks, percentMarks)"
@@ -147,8 +147,8 @@ public class AcademicService {
 		return id;
 	}
 
-	public List<AcademicQualification> getAcademicQualifications(int studentId) {
-		List<AcademicQualification> qualifications = null;
+	public List<Qualification> getAcademicQualifications(int studentId) {
+		List<Qualification> qualifications = null;
 
 		Sql2o sql2o = databaseService.getSql2o();
 		String sql = "select * from academic_qualification where studentId = :studentId order by year";
@@ -158,7 +158,7 @@ public class AcademicService {
 
 		try (Connection con = sql2o.open()) {
 			qualifications = con.createQuery(sql).addParameter("studentId", studentId)
-					.executeAndFetch(AcademicQualification.class);
+					.executeAndFetch(Qualification.class);
 
 			for (var qualification : qualifications) {
 				Exam exam = con.createQuery(examSql).addParameter("id", qualification.getExamId())

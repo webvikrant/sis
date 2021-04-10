@@ -13,6 +13,7 @@ public class Contact {
 
 	private int studentId;
 	private Type type;
+	private String name;
 	private String mobileNo;
 	private String whatsappNo;
 	private String emailId;
