@@ -23,7 +23,7 @@ import in.co.itlabs.sis.business.entities.School;
 import in.co.itlabs.sis.business.entities.Exam.Level;
 import in.co.itlabs.sis.business.services.AcademicService;
 
-public class AcademicQualificationEditor extends VerticalLayout {
+public class AcademicQualificationEditor extends VerticalLayout implements Editor {
 
 	private ComboBox<Level> levelCombo;
 	private ComboBox<Exam> examCombo;
@@ -34,6 +34,9 @@ public class AcademicQualificationEditor extends VerticalLayout {
 	private IntegerField obtainedMarksField;
 	private IntegerField maximumMarksField;
 	private BigDecimalField percentMarksField;
+
+	private Button saveButton;
+	private Button cancelButton;
 
 	private Binder<AcademicQualification> binder;
 
@@ -82,6 +85,9 @@ public class AcademicQualificationEditor extends VerticalLayout {
 
 		HorizontalLayout marksBar = buildMarksBar();
 		marksBar.setWidthFull();
+
+		saveButton = new Button("OK", VaadinIcon.CHECK.create());
+		cancelButton = new Button("Cancel", VaadinIcon.CLOSE.create());
 
 		HorizontalLayout actionBar = buildActionBar();
 		actionBar.setWidthFull();
@@ -155,11 +161,8 @@ public class AcademicQualificationEditor extends VerticalLayout {
 
 	private HorizontalLayout buildActionBar() {
 		HorizontalLayout root = new HorizontalLayout();
-		Button saveButton = new Button("OK", VaadinIcon.CHECK.create());
+
 		saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
-		Button cancelButton = new Button("Close", VaadinIcon.CLOSE.create());
-
 		saveButton.addClickListener(e -> {
 			if (binder.validate().isOk()) {
 
@@ -172,7 +175,7 @@ public class AcademicQualificationEditor extends VerticalLayout {
 		});
 
 		cancelButton.addClickListener(e -> {
-			fireEvent(new CloseEvent(this, binder.getBean()));
+			fireEvent(new CancelEvent(this, binder.getBean()));
 		});
 
 		Span blank = new Span();
@@ -204,8 +207,8 @@ public class AcademicQualificationEditor extends VerticalLayout {
 		}
 	}
 
-	public static class CloseEvent extends AcademicQualificationEvent {
-		CloseEvent(AcademicQualificationEditor source, AcademicQualification academicQualification) {
+	public static class CancelEvent extends AcademicQualificationEvent {
+		CancelEvent(AcademicQualificationEditor source, AcademicQualification academicQualification) {
 			super(source, academicQualification);
 		}
 	}
@@ -214,5 +217,21 @@ public class AcademicQualificationEditor extends VerticalLayout {
 			ComponentEventListener<T> listener) {
 
 		return getEventBus().addListener(eventType, listener);
+	}
+
+	@Override
+	public void setEditingEnabled(boolean enabled) {
+		levelCombo.setReadOnly(!enabled);
+		examCombo.setReadOnly(!enabled);
+		boardCombo.setReadOnly(!enabled);
+		schoolCombo.setReadOnly(!enabled);
+		yearField.setReadOnly(!enabled);
+		rollNoField.setReadOnly(!enabled);
+		obtainedMarksField.setReadOnly(!enabled);
+		maximumMarksField.setReadOnly(!enabled);
+		percentMarksField.setReadOnly(!enabled);
+
+		saveButton.setVisible(enabled);
+		cancelButton.setVisible(enabled);
 	}
 }

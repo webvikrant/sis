@@ -63,8 +63,6 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		this.academicService = academicService;
 		this.addressService = addressService;
 
-		setSizeFull();
-		setPadding(false);
 		setAlignItems(Alignment.CENTER);
 
 //		newStudentForm = new NewStudentForm(academicService,studentService);

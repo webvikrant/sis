@@ -46,8 +46,6 @@ public class StudentsView extends VerticalLayout {
 		newStudentForm = new NewStudentForm(academicService, studentService);
 		dialog = new Dialog();
 
-		setSizeFull();
-		setPadding(false);
 		setAlignItems(Alignment.CENTER);
 
 //		title bar

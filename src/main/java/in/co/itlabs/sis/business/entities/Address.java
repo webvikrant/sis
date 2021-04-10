@@ -11,10 +11,15 @@ public class Address {
 		Permanent, Correspondence, Local_Guardian
 	}
 
+	private int id;
 	private int studentId;
+
 	private Type type;
 	private String address;
+	private int districtId;
+	private String pinCode;
+
+	// transient
 	private District district;
 	private State state;
-	private String pinCode;
 }

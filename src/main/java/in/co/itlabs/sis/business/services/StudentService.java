@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
+import in.co.itlabs.sis.business.entities.Address;
 import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Session;
 import in.co.itlabs.sis.business.entities.Student;
@@ -182,14 +183,17 @@ public class StudentService {
 		return success;
 	}
 
-	public boolean updateStudentPermanentDistrict(List<String> messages, int studentId, int districtId) {
+	public boolean updateStudentPermanentAddressDetails(List<String> messages, Address address) {
 		boolean success = false;
 
 		Sql2o sql2o = databaseService.getSql2o();
-		String sql = "update student set  permanentDistrictId = :districtId where id = :id";
+		String sql = "update student set" + " permanentAddress = :address," + " permanentPincode = :pinCode,"
+				+ " permanentDistrictId = :districtId where id = :id";
 
 		try (Connection con = sql2o.open()) {
-			con.createQuery(sql).addParameter("id", studentId).addParameter("districtId", districtId).executeUpdate();
+			con.createQuery(sql).addParameter("id", address.getStudentId())
+					.addParameter("address", address.getAddress()).addParameter("pinCode", address.getPinCode())
+					.addParameter("districtId", address.getDistrictId()).executeUpdate();
 			success = true;
 
 			con.close();
@@ -198,14 +202,17 @@ public class StudentService {
 		return success;
 	}
 
-	public boolean updateStudentCorrespondenceDistrict(List<String> messages, int studentId, int districtId) {
+	public boolean updateStudentCorrespondenceAddressDetails(List<String> messages, Address address) {
 		boolean success = false;
 
 		Sql2o sql2o = databaseService.getSql2o();
-		String sql = "update student set  correspondenceDistrictId = :districtId where id = :id";
+		String sql = "update student set" + " correspondenceAddress = :address," + " correspondencePincode = :pinCode,"
+				+ " correspondenceDistrictId = :districtId where id = :id";
 
 		try (Connection con = sql2o.open()) {
-			con.createQuery(sql).addParameter("id", studentId).addParameter("districtId", districtId).executeUpdate();
+			con.createQuery(sql).addParameter("id", address.getStudentId())
+					.addParameter("address", address.getAddress()).addParameter("pinCode", address.getPinCode())
+					.addParameter("districtId", address.getDistrictId()).executeUpdate();
 			success = true;
 
 			con.close();
@@ -214,14 +221,17 @@ public class StudentService {
 		return success;
 	}
 
-	public boolean updateStudentLocalGuardianDistrict(List<String> messages, int studentId, int districtId) {
+	public boolean updateStudentLocalGuardianAddressDetails(List<String> messages, Address address) {
 		boolean success = false;
 
 		Sql2o sql2o = databaseService.getSql2o();
-		String sql = "update student set  localGuardianDistrictId = :districtId where id = :id";
+		String sql = "update student set" + " localGuardianAddress = :address," + " localGuardianPincode = :pinCode,"
+				+ " localGuardianDistrictId = :districtId where id = :id";
 
 		try (Connection con = sql2o.open()) {
-			con.createQuery(sql).addParameter("id", studentId).addParameter("districtId", districtId).executeUpdate();
+			con.createQuery(sql).addParameter("id", address.getStudentId())
+					.addParameter("address", address.getAddress()).addParameter("pinCode", address.getPinCode())
+					.addParameter("districtId", address.getDistrictId()).executeUpdate();
 			success = true;
 
 			con.close();
