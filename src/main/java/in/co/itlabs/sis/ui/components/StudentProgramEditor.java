@@ -75,7 +75,7 @@ public class StudentProgramEditor extends VerticalLayout {
 
 			if (binder.validate().isOk()) {
 				messages.clear();
-				boolean success = studentService.updateStudentProgram(messages, binder.getBean().getId(),
+				boolean success = studentService.updateStudentProgramId(messages, binder.getBean().getId(),
 						binder.getBean().getProgram().getId());
 
 				if (success) {

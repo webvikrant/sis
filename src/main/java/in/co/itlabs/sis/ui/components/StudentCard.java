@@ -1,16 +1,30 @@
 package in.co.itlabs.sis.ui.components;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.StreamResource;
 
+import in.co.itlabs.sis.business.entities.MediaFile;
+import in.co.itlabs.sis.business.entities.MediaFile.Label;
 import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.helpers.Stage;
+import in.co.itlabs.sis.business.services.MediaService;
 import in.co.itlabs.sis.business.services.StudentService;
 
 public class StudentCard extends VerticalLayout {
+
+	private Button pickPhotoMediaButton;
 
 	private Image photo;
 	private TextField nameField;
@@ -23,21 +37,25 @@ public class StudentCard extends VerticalLayout {
 	private Student student;
 
 	private StudentService studentService;
+	private MediaService mediaService;
 
 	private Dialog dialog;
+	private MediaFilePicker photoPicker;
+	private MediaFilePicker signPicker;
 
-	public StudentCard(StudentService studentService) {
+	private final List<String> messages = new ArrayList<>();
+
+	public StudentCard(StudentService studentService, MediaService mediaService) {
 		this.studentService = studentService;
+		this.mediaService = mediaService;
 
-		dialog = new Dialog();
-		configureDialog();
-		
-		photo = new Image("https://picsum.photos/100/110", "");
-		photo.setWidth("100px");
-		photo.setHeight("110px");
-		photo.addClassName("photo");
-		photo.getStyle().set("objectFit", "contain");
-		
+		pickPhotoMediaButton = new Button("Set photo", VaadinIcon.PICTURE.create());
+		configurePickPhotoMediaButton();
+
+//		photo = new Image("https://picsum.photos/100/110", "photograph");
+		photo = new Image();
+		configurePhoto();
+
 		nameField = new TextField("Name");
 		configureNameField();
 
@@ -58,7 +76,31 @@ public class StudentCard extends VerticalLayout {
 		card.setAlignItems(Alignment.CENTER);
 		card.add(photo, nameField, admissionIdField, programField, statusField, stageField);
 
-		add(card);
+		add(pickPhotoMediaButton, card);
+
+		// dialog related
+		dialog = new Dialog();
+		configureDialog();
+
+		photoPicker = new MediaFilePicker(mediaService);
+		photoPicker.addListener(MediaFilePicker.SaveEvent.class, this::handlePhotoSaveEvent);
+
+	}
+
+	private void configurePickPhotoMediaButton() {
+		pickPhotoMediaButton.addClickListener(e -> {
+			dialog.removeAll();
+			dialog.add(photoPicker);
+			dialog.open();
+
+			photoPicker.setStudentId(studentId);
+		});
+	}
+
+	private void configurePhoto() {
+		photo.addClassName("photo");
+		photo.getStyle().set("objectFit", "contain");
+		photo.setHeight("130px");
 	}
 
 	private void configureNameField() {
@@ -108,6 +150,16 @@ public class StudentCard extends VerticalLayout {
 	private void reload() {
 		student = studentService.getStudentById(studentId);
 
+		MediaFile mediaFile = mediaService.getMediaFile(student.getPhotoMediaFileId());
+		if (mediaFile != null) {
+			byte[] imageBytes = mediaFile.getFileBytes();
+			StreamResource resource = new StreamResource(mediaFile.getFileName(),
+					() -> new ByteArrayInputStream(imageBytes));
+			photo.setSrc(resource);
+		} else {
+			photo.setSrc("https://picsum.photos/100/110");
+		}
+
 		nameField.setValue(student.getName());
 		admissionIdField.setValue(student.getAdmissionId());
 
@@ -120,7 +172,17 @@ public class StudentCard extends VerticalLayout {
 		if (stage != null) {
 			stageField.setValue(stage.name());
 		}
+	}
 
+	private void handlePhotoSaveEvent(MediaFilePicker.SaveEvent event) {
+		MediaFile mediaFile = event.getMediaFile();
+		boolean success = studentService.updateStudentPhotoMediaFileId(messages, studentId, mediaFile.getId());
+		if (success) {
+			Notification.show("Photograph set successfully", 3000, Position.TOP_CENTER);
+			reload();
+		} else {
+			Notification.show(messages.toString(), 3000, Position.TOP_CENTER);
+		}
 	}
 
 }

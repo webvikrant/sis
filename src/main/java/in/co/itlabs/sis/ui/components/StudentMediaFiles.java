@@ -1,11 +1,13 @@
 package in.co.itlabs.sis.ui.components;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -85,22 +87,23 @@ public class StudentMediaFiles extends VerticalLayout {
 		grid.removeAllColumns();
 
 		grid.addComponentColumn(mediaFile -> {
-			byte[] imageBytes = mediaFile.getFileBytes();
-			StreamResource resource = new StreamResource(mediaFile.getFileName(),
-					() -> new ByteArrayInputStream(imageBytes));
+			Image photo = new Image();
+			photo.addClassName("photo");
+			photo.getStyle().set("objectFit", "contain");
+			photo.setHeight("50px");
 
-			FileField fileField = new FileField();
-			fileField.setReadOnly(true);
-			fileField.setWidth("150px");
+			if (mediaFile != null) {
+				byte[] imageBytes = mediaFile.getFileBytes();
+				StreamResource resource = new StreamResource(mediaFile.getFileName(),
+						() -> new ByteArrayInputStream(imageBytes));
+				photo.setSrc(resource);
+			}
 
-			fileField.setResource(resource, mediaFile.getFileMime(), mediaFile.getFileName());
-
-//			FlexLayout imageContainer = new FlexLayout();
-			return fileField;
+			return photo;
 
 		}).setHeader("Media");
 
-		grid.addColumn("type").setHeader("Type");
+		grid.addColumn("label").setHeader("Label");
 		grid.addColumn("fileName").setHeader("File name");
 
 		grid.getColumns().forEach(column -> {
@@ -124,6 +127,7 @@ public class StudentMediaFiles extends VerticalLayout {
 
 		if (mediaFile.getId() == 0) {
 // 		create new
+			mediaFile.setCreatedAt(LocalDateTime.now());
 			int id = mediaService.createMediaFile(event.getMediaFile());
 			if (id > 0) {
 				Notification.show("Media file created successfully", 3000, Position.TOP_CENTER);

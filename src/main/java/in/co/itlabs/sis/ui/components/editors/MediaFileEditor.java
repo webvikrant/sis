@@ -7,7 +7,6 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -18,12 +17,12 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.shared.Registration;
 
 import in.co.itlabs.sis.business.entities.MediaFile;
-import in.co.itlabs.sis.business.entities.MediaFile.Type;
+import in.co.itlabs.sis.business.entities.MediaFile.Label;
 import in.co.itlabs.sis.ui.components.FileField;
 
 public class MediaFileEditor extends VerticalLayout implements Editor {
 
-	private ComboBox<Type> typeCombo;
+	private ComboBox<Label> labelCombo;
 	private FileField fileField;
 
 	private Button saveButton;
@@ -33,7 +32,7 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 
 	public MediaFileEditor() {
 
-		typeCombo = new ComboBox<Type>("Type");
+		labelCombo = new ComboBox<Label>("Label");
 		configureTypeCombo();
 
 		fileField = new FileField();
@@ -41,7 +40,7 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 
 		binder = new Binder<>(MediaFile.class);
 
-		binder.forField(typeCombo).asRequired("Type can not be blank").bind("type");
+		binder.forField(labelCombo).asRequired("Label can not be blank").bind("label");
 //		binder.forField(fileField).asRequired("File can not be blank").bind("fileMime");
 
 		saveButton = new Button("OK", VaadinIcon.CHECK.create());
@@ -50,13 +49,13 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 		HorizontalLayout actionBar = buildActionBar();
 		actionBar.setWidthFull();
 
-		add(typeCombo, fileField, actionBar);
+		add(labelCombo, fileField, actionBar);
 
 	}
 
 	private void configureTypeCombo() {
-		typeCombo.setWidthFull();
-		typeCombo.setItems(Type.values());
+		labelCombo.setWidthFull();
+		labelCombo.setItems(Label.values());
 	}
 
 	private void configureFileField() {
@@ -66,8 +65,8 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 		Upload upload = fileField.getUpload();
 		upload.setAutoUpload(true);
 		upload.setMaxFiles(1);
-		upload.setDropLabel(new Label("Upload a 512 KB file (JPEG or PNG)"));
-		upload.setAcceptedFileTypes("image/jpeg", "image/png");
+		upload.setDropLabel(new Span("Upload a 512 KB file (JPEG or PNG)"));
+		upload.setAcceptedFileTypes("image/jpeg", "image/png","application/pdf");
 		upload.setMaxFileSize(1024 * 512);
 	}
 
@@ -122,7 +121,7 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 
 	@Override
 	public void setEditingEnabled(boolean enabled) {
-		typeCombo.setReadOnly(!enabled);
+		labelCombo.setReadOnly(!enabled);
 		fileField.setReadOnly(!enabled);
 
 		saveButton.setVisible(enabled);

@@ -19,8 +19,8 @@ public class Student {
 
 	private String name; // required
 	private LocalDate birthDate; // required
-	private byte[] photo;
-	private byte[] signature;
+	private int photoMediaFileId;
+	private int signMediaFileId;
 	private Gender gender;
 	private int religionId;
 	private int casteId;

@@ -106,6 +106,24 @@ public class StudentService {
 		return students;
 	}
 
+	// update student photo media file id
+	public boolean updateStudentPhotoMediaFileId(List<String> messages, int studentId, int photoMediaFileId) {
+		boolean success = false;
+
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "update student set photoMediaFileId = :photoMediaFileId where id = :id";
+
+		try (Connection con = sql2o.open()) {
+			con.createQuery(sql).addParameter("id", studentId).addParameter("photoMediaFileId", photoMediaFileId)
+					.executeUpdate();
+			success = true;
+
+			con.close();
+		}
+
+		return success;
+	}
+
 	// update birthDate
 	public boolean updateStudentBirthDate(List<String> messages, int studentId, LocalDate birthDate) {
 		boolean success = false;
@@ -139,7 +157,7 @@ public class StudentService {
 		return success;
 	}
 
-	public boolean updateStudentProgram(List<String> messages, int studentId, int programId) {
+	public boolean updateStudentProgramId(List<String> messages, int studentId, int programId) {
 		boolean success = false;
 
 		Sql2o sql2o = databaseService.getSql2o();

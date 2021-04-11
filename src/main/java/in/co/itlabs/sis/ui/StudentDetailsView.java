@@ -14,6 +14,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
@@ -83,7 +84,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		configureCombo(studentCombo);
 
 //		newStudentForm = new NewStudentForm(academicService,studentService);
-		studentCard = new StudentCard(studentService);
+		studentCard = new StudentCard(studentService, mediaService);
 
 		tabs = new Tabs();
 
@@ -107,11 +108,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 
 		add(studentCombo, splitLayout);
 
-//		dialog = new Dialog();
-//		configureDialog();
-		Student student = new Student();
-		student.setId(6);
-		student.setName("XXX");
+		// check if SudentsView has put the selected student into the session
+		Student student = VaadinSession.getCurrent().getAttribute(Student.class);
 		studentCombo.setValue(student);
 	}
 

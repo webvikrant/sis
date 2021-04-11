@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -20,6 +20,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 import in.co.itlabs.sis.business.entities.Program;
 import in.co.itlabs.sis.business.entities.Student;
@@ -168,9 +169,20 @@ public class StudentsView extends VerticalLayout {
 
 		grid.addColumn("stage");
 
-		grid.addComponentColumn(item -> {
-			return new Anchor("student-details/" + item.getId(), "Details");
-		}).setHeader("Details");
+//		grid.addComponentColumn(item -> {
+//			return new Anchor("student-details/" + item.getId(), "Details");
+//		}).setHeader("Details");
+
+		grid.addComponentColumn(student -> {
+			Button button = new Button("More...", VaadinIcon.ARROW_FORWARD.create());
+			button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+			button.addClickListener(e -> {
+				VaadinSession.getCurrent().setAttribute(Student.class, student);
+				UI.getCurrent().navigate("student-details");
+			});
+
+			return button;
+		}).setHeader("More");
 
 		grid.getColumns().forEach(col -> col.setAutoWidth(true));
 	}
