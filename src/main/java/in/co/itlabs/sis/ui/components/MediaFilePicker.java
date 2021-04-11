@@ -6,12 +6,13 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.shared.Registration;
 
@@ -20,8 +21,7 @@ import in.co.itlabs.sis.business.services.MediaService;
 
 public class MediaFilePicker extends VerticalLayout {
 
-	private ComboBox<MediaFile> mediaFileCombo;
-	private Image image;
+	private ListBox<MediaFile> mediaFileList;
 	private Button saveButton;
 	private Button cancelButton;
 
@@ -34,11 +34,9 @@ public class MediaFilePicker extends VerticalLayout {
 
 		setPadding(false);
 
-		mediaFileCombo = new ComboBox<MediaFile>();
-		configureMediaFileCombo();
-
-		image = new Image();
-		configureImage();
+//		mediaFileCombo = new ComboBox<MediaFile>();
+		mediaFileList = new ListBox<MediaFile>();
+		configureMediaFileList();
 
 		saveButton = new Button("OK", VaadinIcon.CHECK.create());
 		cancelButton = new Button("Cancel", VaadinIcon.CLOSE.create());
@@ -46,32 +44,41 @@ public class MediaFilePicker extends VerticalLayout {
 		HorizontalLayout actionBar = buildActionBar();
 		actionBar.setWidthFull();
 
-		add(mediaFileCombo, image, actionBar);
+		add(mediaFileList, actionBar);
 	}
 
-	private void configureImage() {
-		image.addClassName("photo");
-		image.getStyle().set("objectFit", "contain");
-		image.setHeight("130px");
+	private void configureMediaFileList() {
+		mediaFileList.setWidthFull();
+		mediaFileList.setHeight("300px");
 
-	}
-
-	private void configureMediaFileCombo() {
-		mediaFileCombo.setWidthFull();
-		mediaFileCombo.setItemLabelGenerator(mediaFile -> {
-			return mediaFile.getLabel() + " - " + mediaFile.getFileName();
-		});
-
-		mediaFileCombo.addValueChangeListener(e -> {
-			MediaFile mediaFile = e.getValue();
+		mediaFileList.setRenderer(new ComponentRenderer<VerticalLayout, MediaFile>((mediaFile) -> {
+			VerticalLayout root = new VerticalLayout();
+			Image image = new Image();
+			image.setHeight("50px");
+			image.getStyle().set("objectFit", "cover");
 			if (mediaFile != null) {
 				byte[] imageBytes = mediaFile.getFileBytes();
 				StreamResource resource = new StreamResource(mediaFile.getFileName(),
 						() -> new ByteArrayInputStream(imageBytes));
 				image.setSrc(resource);
 			}
+			root.add(image);
+			return root;
+		}));
 
-		});
+//		mediaFileList.setItemLabelGenerator(mediaFile -> {
+//			return mediaFile.getLabel() + " - " + mediaFile.getFileName();
+//		});
+
+//		mediaFileCombo.addValueChangeListener(e -> {
+//			MediaFile mediaFile = e.getValue();
+//			if (mediaFile != null) {
+//				byte[] imageBytes = mediaFile.getFileBytes();
+//				StreamResource resource = new StreamResource(mediaFile.getFileName(),
+//						() -> new ByteArrayInputStream(imageBytes));
+//				image.setSrc(resource);
+//			}
+//		});
 	}
 
 	public void setStudentId(int studentId) {
@@ -80,7 +87,7 @@ public class MediaFilePicker extends VerticalLayout {
 	}
 
 	private void reload() {
-		mediaFileCombo.setItems(mediaService.getMediaFiles(studentId));
+		mediaFileList.setItems(mediaService.getMediaFiles(studentId));
 	}
 
 	private HorizontalLayout buildActionBar() {
@@ -88,8 +95,8 @@ public class MediaFilePicker extends VerticalLayout {
 
 		saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		saveButton.addClickListener(e -> {
-			if (mediaFileCombo.getValue() != null) {
-				fireEvent(new SaveEvent(this, mediaFileCombo.getValue()));
+			if (mediaFileList.getValue() != null) {
+				fireEvent(new SaveEvent(this, mediaFileList.getValue()));
 			}
 		});
 

@@ -107,7 +107,7 @@ public class StudentService {
 	}
 
 	// update student photo media file id
-	public boolean updateStudentPhotoMediaFileId(List<String> messages, int studentId, int photoMediaFileId) {
+	public boolean updateStudentPhotohMediaFileId(List<String> messages, int studentId, int photoMediaFileId) {
 		boolean success = false;
 
 		Sql2o sql2o = databaseService.getSql2o();
@@ -115,6 +115,24 @@ public class StudentService {
 
 		try (Connection con = sql2o.open()) {
 			con.createQuery(sql).addParameter("id", studentId).addParameter("photoMediaFileId", photoMediaFileId)
+					.executeUpdate();
+			success = true;
+
+			con.close();
+		}
+
+		return success;
+	}
+
+	// update student signature media file id
+	public boolean updateStudentSignMediaFileId(List<String> messages, int studentId, int signMediaFileId) {
+		boolean success = false;
+
+		Sql2o sql2o = databaseService.getSql2o();
+		String sql = "update student set signMediaFileId = :signMediaFileId where id = :id";
+
+		try (Connection con = sql2o.open()) {
+			con.createQuery(sql).addParameter("id", studentId).addParameter("signMediaFileId", signMediaFileId)
 					.executeUpdate();
 			success = true;
 

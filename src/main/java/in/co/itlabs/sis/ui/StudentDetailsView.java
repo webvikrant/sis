@@ -4,14 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
@@ -33,7 +29,7 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 
 @PageTitle(value = "Student details")
 @Route(value = "student-details", layout = AppLayout.class)
-public class StudentDetailsView extends VerticalLayout implements HasUrlParameter<Integer> {
+public class StudentDetailsView extends VerticalLayout {
 
 	private StudentService studentService;
 	private AcademicService academicService;
@@ -41,6 +37,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private MediaService mediaService;
 
 	private ComboBox<Student> studentCombo;
+	private SplitLayout splitLayout;
 
 //	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
@@ -103,23 +100,24 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		add(titleBar);
 
 //		split layout
-		var splitLayout = buildSplitLayout();
-		splitLayout.setSizeFull();
+		splitLayout = new SplitLayout();
+		configureSplitLayout();
 
 		add(studentCombo, splitLayout);
+		splitLayout.setVisible(false);
 
 		// check if SudentsView has put the selected student into the session
 		Student student = VaadinSession.getCurrent().getAttribute(Student.class);
 		studentCombo.setValue(student);
 	}
 
-	private SplitLayout buildSplitLayout() {
+	private void configureSplitLayout() {
 		// TODO Auto-generated method stub
-		SplitLayout root = new SplitLayout();
-		root.setSplitterPosition(25);
-		root.setSizeFull();
 
-		root.addToPrimary(studentCard);
+		splitLayout.setSplitterPosition(25);
+		splitLayout.setSizeFull();
+
+		splitLayout.addToPrimary(studentCard);
 
 		configureTabs();
 
@@ -128,9 +126,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		tabsLayout.setSpacing(false);
 		tabsLayout.add(tabs, content);
 
-		root.addToSecondary(tabsLayout);
-
-		return root;
+		splitLayout.addToSecondary(tabsLayout);
 	}
 
 	private void configureTabs() {
@@ -235,20 +231,16 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	}
 
 	private void loadStudent() {
-		studentCard.setStudentId(studentId);
-		tabs.setSelectedTab(null);
-		if (currentTab == null) {
-			currentTab = personalTab;
+		if (studentId == 0) {
+			splitLayout.setVisible(false);
+		} else {
+			splitLayout.setVisible(true);
+			studentCard.setStudentId(studentId);
+			tabs.setSelectedTab(null);
+			if (currentTab == null) {
+				currentTab = personalTab;
+			}
+			tabs.setSelectedTab(currentTab);
 		}
-		tabs.setSelectedTab(currentTab);
-	}
-
-	@Override
-	public void setParameter(BeforeEvent event, @OptionalParameter Integer parameter) {
-		if (parameter == null || parameter == 0) {
-			return;
-		}
-		studentId = parameter;
-		loadStudent();
 	}
 }

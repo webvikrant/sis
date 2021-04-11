@@ -174,7 +174,7 @@ public class StudentsView extends VerticalLayout {
 //		}).setHeader("Details");
 
 		grid.addComponentColumn(student -> {
-			Button button = new Button("More...", VaadinIcon.ARROW_FORWARD.create());
+			Button button = new Button("More", VaadinIcon.ARROW_FORWARD.create());
 			button.addThemeVariants(ButtonVariant.LUMO_SMALL);
 			button.addClickListener(e -> {
 				VaadinSession.getCurrent().setAttribute(Student.class, student);
