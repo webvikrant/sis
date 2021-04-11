@@ -36,7 +36,8 @@ public class StudentCard extends VerticalLayout {
 		photo.setWidth("100px");
 		photo.setHeight("110px");
 		photo.addClassName("photo");
-
+		photo.getStyle().set("objectFit", "contain");
+		
 		nameField = new TextField("Name");
 		configureNameField();
 

@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import com.google.common.io.ByteStreams;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -13,8 +12,8 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.server.StreamResource;
 
-public class FileField extends Composite<VerticalLayout> {
-	private final  Image image;
+public class FileField extends VerticalLayout {
+	private final Image image;
 	private final MemoryBuffer buffer;
 	private final Upload upload;
 	private byte[] fileBytes;
@@ -23,17 +22,14 @@ public class FileField extends Composite<VerticalLayout> {
 
 	public FileField() {
 
-		getContent().setMargin(false);
-		getContent().setPadding(false);
-		getContent().setSpacing(false);
-		
 		image = new Image();
-		configureImage();
 
 		buffer = new MemoryBuffer();
 		upload = new Upload(buffer);
 
-		getContent().add(image, upload);
+
+		add(image, upload);
+		configureImage();
 
 		// listeners
 		upload.addStartedListener(event -> {
@@ -67,16 +63,23 @@ public class FileField extends Composite<VerticalLayout> {
 	}
 
 	private void configureImage() {
+//		image.addClassName("photo");
 		image.setWidthFull();
+		image.setHeight("100px");
+
+		image.getStyle().set("objectFit", "contain");
 	}
 
 	public void setReadOnly(boolean readOnly) {
 		upload.setVisible(!readOnly);
 	}
 
-	public void setResource(StreamResource resource) {
+	public void setResource(StreamResource resource, String mime, String name) {
 		if (resource != null) {
 			image.setSrc(resource);
+			if (name != null) {
+				image.setAlt(name);
+			}
 		}
 	}
 

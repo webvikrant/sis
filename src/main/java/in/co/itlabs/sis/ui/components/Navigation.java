@@ -61,8 +61,9 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 		});
 
 		userButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		
 		logoutButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-
+		logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 	}
 
 	@Override

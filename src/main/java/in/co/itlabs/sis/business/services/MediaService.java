@@ -43,10 +43,10 @@ public class MediaService {
 		List<MediaFile> mediaFiles = null;
 
 		Sql2o sql2o = databaseService.getSql2o();
-		String sql = "select * from media_file order by type, fileName";
+		String sql = "select * from media_file where studentId = :studentId order by type, fileName";
 
 		try (Connection con = sql2o.open()) {
-			mediaFiles = con.createQuery(sql).executeAndFetch(MediaFile.class);
+			mediaFiles = con.createQuery(sql).addParameter("studentId", studentId).executeAndFetch(MediaFile.class);
 			con.close();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

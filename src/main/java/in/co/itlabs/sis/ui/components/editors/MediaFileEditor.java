@@ -1,5 +1,7 @@
 package in.co.itlabs.sis.ui.components.editors;
 
+import java.io.ByteArrayInputStream;
+
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -12,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.shared.Registration;
 
 import in.co.itlabs.sis.business.entities.MediaFile;
@@ -29,8 +32,6 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 	private Binder<MediaFile> binder;
 
 	public MediaFileEditor() {
-
-		setPadding(false);
 
 		typeCombo = new ComboBox<Type>("Type");
 		configureTypeCombo();
@@ -59,17 +60,31 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 	}
 
 	private void configureFileField() {
+		fileField.setWidthFull();
+		fileField.setPadding(false);
+		
 		Upload upload = fileField.getUpload();
 		upload.setAutoUpload(true);
 		upload.setMaxFiles(1);
-		upload.setDropLabel(new Label("Upload a 512 KB file in JPEG or PNG format"));
+		upload.setDropLabel(new Label("Upload a 512 KB file (JPEG or PNG)"));
 		upload.setAcceptedFileTypes("image/jpeg", "image/png");
 		upload.setMaxFileSize(1024 * 512);
-
 	}
 
 	public void setMediaFile(MediaFile mediaFile) {
 		binder.setBean(mediaFile);
+
+		// are we creating a new mdeia file or editing an existing one
+		if (mediaFile.getId() == 0) {
+			// new media file
+
+		} else {
+			// existing media file
+			byte[] fileBytes = mediaFile.getFileBytes();
+			StreamResource resource = new StreamResource(mediaFile.getFileName(),
+					() -> new ByteArrayInputStream(fileBytes));
+			fileField.setResource(resource, mediaFile.getFileMime(), mediaFile.getFileName());
+		}
 	}
 
 	private HorizontalLayout buildActionBar() {
@@ -105,6 +120,16 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 		return root;
 	}
 
+	@Override
+	public void setEditingEnabled(boolean enabled) {
+		typeCombo.setReadOnly(!enabled);
+		fileField.setReadOnly(!enabled);
+
+		saveButton.setVisible(enabled);
+		cancelButton.setVisible(enabled);
+
+	}
+
 	public static abstract class MediaFileEvent extends ComponentEvent<MediaFileEditor> {
 		private MediaFile mediaFile;
 
@@ -135,13 +160,5 @@ public class MediaFileEditor extends VerticalLayout implements Editor {
 			ComponentEventListener<T> listener) {
 
 		return getEventBus().addListener(eventType, listener);
-	}
-
-	@Override
-	public void setEditingEnabled(boolean enabled) {
-		typeCombo.setReadOnly(!enabled);
-
-		saveButton.setVisible(enabled);
-		cancelButton.setVisible(enabled);
 	}
 }

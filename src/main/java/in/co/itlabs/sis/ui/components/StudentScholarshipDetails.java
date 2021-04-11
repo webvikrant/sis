@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -17,7 +18,7 @@ import in.co.itlabs.sis.business.entities.MediaFile;
 import in.co.itlabs.sis.business.services.MediaService;
 import in.co.itlabs.sis.ui.components.editors.MediaFileEditor;
 
-public class StudentMediaFiles extends VerticalLayout {
+public class StudentScholarshipDetails extends VerticalLayout {
 
 	private Button createMediaFileButton;
 	private Grid<MediaFile> grid;
@@ -31,7 +32,7 @@ public class StudentMediaFiles extends VerticalLayout {
 	private MediaFileEditor mediaFileEditor;
 	private Dialog dialog;
 
-	public StudentMediaFiles(MediaService mediaService) {
+	public StudentScholarshipDetails(MediaService mediaService) {
 		this.mediaService = mediaService;
 
 		createMediaFileButton = new Button("Add", VaadinIcon.PLUS.create());
@@ -44,9 +45,10 @@ public class StudentMediaFiles extends VerticalLayout {
 		actionBar.add(createMediaFileButton);
 
 		grid = new Grid<>(MediaFile.class);
-
-		add(actionBar, grid);
-		configureGrid();
+//		configureGrid();
+		
+		add(new Span("Scholarship Details"));
+		
 
 		// dialog related
 		mediaFileEditor = new MediaFileEditor();
@@ -62,9 +64,9 @@ public class StudentMediaFiles extends VerticalLayout {
 	public void setStudentId(int id) {
 		this.studentId = id;
 		if (id == 0) {
-			StudentMediaFiles.this.setVisible(false);
+			StudentScholarshipDetails.this.setVisible(false);
 		} else {
-			StudentMediaFiles.this.setVisible(true);
+			StudentScholarshipDetails.this.setVisible(true);
 			reload();
 		}
 	}

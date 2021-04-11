@@ -17,7 +17,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -34,7 +33,6 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 @Route(value = "students", layout = AppLayout.class)
 public class StudentsView extends VerticalLayout {
 
-	private AcademicService academicService;
 	private StudentService studentService;
 
 	private final Grid<Student> grid = new Grid<>(Student.class);
@@ -47,7 +45,6 @@ public class StudentsView extends VerticalLayout {
 
 	@Autowired
 	public StudentsView(AcademicService academicService, StudentService studentService) {
-		this.academicService = academicService;
 		this.studentService = studentService;
 
 		student = new Student();
@@ -199,4 +196,30 @@ public class StudentsView extends VerticalLayout {
 	private void reload() {
 		grid.setItems(studentService.getAllStudents());
 	}
+
+//	public static abstract class StudentEvent extends ComponentEvent<StudentsView> {
+//		private Student student;
+//
+//		protected StudentEvent(StudentsView source, Student student) {
+//
+//			super(source, false);
+//			this.student = student;
+//		}
+//
+//		public Student getStudent() {
+//			return student;
+//		}
+//	}
+//
+//	public static class ShowDetailsEvent extends StudentEvent {
+//		ShowDetailsEvent(StudentsView source, Student student) {
+//			super(source, student);
+//		}
+//	}
+//
+//	public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
+//			ComponentEventListener<T> listener) {
+//
+//		return getEventBus().addListener(eventType, listener);
+//	}
 }

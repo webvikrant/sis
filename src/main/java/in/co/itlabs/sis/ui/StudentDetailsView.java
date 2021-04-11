@@ -6,7 +6,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -22,6 +21,8 @@ import in.co.itlabs.sis.business.services.AddressService;
 import in.co.itlabs.sis.business.services.MediaService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.StudentPersonalDetails;
+import in.co.itlabs.sis.ui.components.StudentProgressDetails;
+import in.co.itlabs.sis.ui.components.StudentScholarshipDetails;
 import in.co.itlabs.sis.ui.components.StudentAddressDetails;
 import in.co.itlabs.sis.ui.components.StudentAdmissionDetails;
 import in.co.itlabs.sis.ui.components.StudentCard;
@@ -37,6 +38,8 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private AcademicService academicService;
 	private AddressService addressService;
 	private MediaService mediaService;
+
+	private ComboBox<Student> studentCombo;
 
 //	private NewStudentForm newStudentForm;
 	private StudentCard studentCard;
@@ -54,11 +57,14 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private StudentContactDetails contactDetails;
 	private StudentAddressDetails addressDetails;
 	private StudentAdmissionDetails admissionDetails;
+	private StudentProgressDetails progressDetails;
+	private StudentScholarshipDetails scholarshipDetails;
 	private StudentMediaFiles mediaFiles;
 
 //	private Dialog dialog;
 
 	private int studentId = 0;
+	private Tab currentTab = null;
 
 	@Autowired
 	public StudentDetailsView(StudentService studentService, AcademicService academicService,
@@ -72,6 +78,9 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		setSizeFull();
 		setPadding(false);
 		setAlignItems(Alignment.CENTER);
+
+		studentCombo = new ComboBox<Student>();
+		configureCombo(studentCombo);
 
 //		newStudentForm = new NewStudentForm(academicService,studentService);
 		studentCard = new StudentCard(studentService);
@@ -92,20 +101,18 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		var titleBar = buildTitleBar();
 		add(titleBar);
 
-//		search bar
-		var searchBar = buildSearchBar();
-		setHorizontalComponentAlignment(Alignment.CENTER, searchBar);
-//		searchBar.setWidthFull();
-		add(searchBar);
-
 //		split layout
 		var splitLayout = buildSplitLayout();
 		splitLayout.setSizeFull();
-		add(splitLayout);
+
+		add(studentCombo, splitLayout);
 
 //		dialog = new Dialog();
 //		configureDialog();
-
+		Student student = new Student();
+		student.setId(6);
+		student.setName("XXX");
+		studentCombo.setValue(student);
 	}
 
 	private SplitLayout buildSplitLayout() {
@@ -150,12 +157,15 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 				}
 				content.add(personalDetails);
 				personalDetails.setStudentId(studentId);
+				currentTab = personalTab;
+
 			} else if (tab == contactTab) {
 				if (contactDetails == null) {
 					contactDetails = new StudentContactDetails(studentService);
 				}
 				content.add(contactDetails);
 				contactDetails.setStudentId(studentId);
+				currentTab = contactTab;
 
 			} else if (tab == addressTab) {
 				if (addressDetails == null) {
@@ -163,6 +173,7 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 				}
 				content.add(addressDetails);
 				addressDetails.setStudentId(studentId);
+				currentTab = addressTab;
 
 			} else if (tab == admissionTab) {
 				if (admissionDetails == null) {
@@ -170,15 +181,31 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 				}
 				content.add(admissionDetails);
 				admissionDetails.setStudentId(studentId);
+				currentTab = admissionTab;
+
+			} else if (tab == progressTab) {
+				if (progressDetails == null) {
+					progressDetails = new StudentProgressDetails(mediaService);
+				}
+				content.add(progressDetails);
+				progressDetails.setStudentId(studentId);
+				currentTab = progressTab;
 
 			} else if (tab == scholarshipTab) {
+				if (scholarshipDetails == null) {
+					scholarshipDetails = new StudentScholarshipDetails(mediaService);
+				}
+				content.add(scholarshipDetails);
+				scholarshipDetails.setStudentId(studentId);
+				currentTab = scholarshipTab;
 
 			} else if (tab == mediaTab) {
 				if (mediaFiles == null) {
-					mediaFiles = new StudentMediaFiles(studentService, mediaService);
+					mediaFiles = new StudentMediaFiles(mediaService);
 				}
 				content.add(mediaFiles);
 				mediaFiles.setStudentId(studentId);
+				currentTab = mediaTab;
 
 			}
 		});
@@ -188,17 +215,6 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 		Div root = new Div();
 		root.addClassName("section-title");
 		root.add("Student details");
-		return root;
-	}
-
-	private HorizontalLayout buildSearchBar() {
-
-		ComboBox<Student> studentCombo = new ComboBox<Student>();
-		configureCombo(studentCombo);
-
-		HorizontalLayout root = new HorizontalLayout();
-		root.add(studentCombo);
-
 		return root;
 	}
 
@@ -223,7 +239,10 @@ public class StudentDetailsView extends VerticalLayout implements HasUrlParamete
 	private void loadStudent() {
 		studentCard.setStudentId(studentId);
 		tabs.setSelectedTab(null);
-		tabs.setSelectedTab(personalTab);
+		if (currentTab == null) {
+			currentTab = personalTab;
+		}
+		tabs.setSelectedTab(currentTab);
 	}
 
 	@Override
