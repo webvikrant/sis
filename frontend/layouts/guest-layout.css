@@ -12,12 +12,6 @@ body {
 	box-shadow: 1px 1px 2px #b0b0b0;
 }
 
-.guest-layout .section-title {
-	padding: 2px 8px 2px 8px;
-	border-top: 4px solid #0071e1;
-	font-size: medium;
-}
-
 .guest-layout .card {
 	background-color: white;
 	border-radius: 3px;
@@ -32,8 +26,4 @@ body {
 .guest-layout .login-photo {
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
-}
-
-.guest-layout .small-text {
-	font-size: small;
 }

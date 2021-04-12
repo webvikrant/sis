@@ -35,8 +35,11 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 public class StudentsView extends VerticalLayout {
 
 	private StudentService studentService;
+	private AcademicService academicService;
 
-	private final Grid<Student> grid = new Grid<>(Student.class);
+	private StudentFilterForm filterForm;
+	private Span recordCount;
+	private Grid<Student> grid;
 
 	private NewStudentEditor newStudentEditor;
 	private Student student;
@@ -45,83 +48,68 @@ public class StudentsView extends VerticalLayout {
 	private final List<String> messages = new ArrayList<>();
 
 	@Autowired
-	public StudentsView(AcademicService academicService, StudentService studentService) {
+	public StudentsView(StudentService studentService, AcademicService academicService) {
 		this.studentService = studentService;
+		this.academicService = academicService;
 
-		student = new Student();
-		newStudentEditor = new NewStudentEditor(academicService);
-		dialog = new Dialog();
-
-		setSizeFull();
+		setMargin(false);
 		setPadding(false);
+		setSpacing(false);
+
 		setAlignItems(Alignment.CENTER);
 
-//		title bar
+		student = new Student();
+
+		newStudentEditor = new NewStudentEditor(academicService);
+		newStudentEditor.addListener(NewStudentEditor.SaveEvent.class, this::handleSaveEvent);
+		newStudentEditor.addListener(NewStudentEditor.CancelEvent.class, this::handleCancelEvent);
+
+		filterForm = new StudentFilterForm();
+		filterForm.setPadding(true);
+
+		dialog = new Dialog();
+		dialog.setWidth("300px");
+		dialog.setModal(true);
+		dialog.setDraggable(true);
+
+		recordCount = new Span();
+		grid = new Grid<Student>(Student.class);
+		configureGrid();
+
 		var titleBar = buildTitleBar();
-		add(titleBar);
+		var menuBar = buildMenuBar();
+
+		VerticalLayout content = new VerticalLayout();
+		content.add(menuBar, grid);
+		content.expand(grid);
 
 //		split layout
 		SplitLayout splitLayout = new SplitLayout();
 		splitLayout.setSplitterPosition(25);
 		splitLayout.setSizeFull();
-		add(splitLayout);
 
-//		filter component on left
-		var filterComponent = buildFilterComponent();
-		splitLayout.addToPrimary(filterComponent);
+		splitLayout.addToPrimary(filterForm);
+		splitLayout.addToSecondary(content);
 
-//		grid etc on right
-		var resultsComponent = buildResultsComponent();
-		splitLayout.addToSecondary(resultsComponent);
-
-		configureDialog();
-
-		newStudentEditor.addListener(NewStudentEditor.SaveEvent.class, this::handleSaveEvent);
-		newStudentEditor.addListener(NewStudentEditor.CancelEvent.class, this::handleCancelEvent);
+		add(titleBar, splitLayout);
 
 		reload();
 	}
 
 	private Div buildTitleBar() {
 		Div root = new Div();
-		root.addClassName("section-title");
+		root.addClassName("view-title");
 		root.add("Students");
 		return root;
 	}
 
-	private void configureDialog() {
+	private HorizontalLayout buildMenuBar() {
 		// TODO Auto-generated method stub
-		dialog.setWidth("300px");
-		dialog.setModal(true);
-		dialog.setDraggable(true);
-	}
 
-	private VerticalLayout buildFilterComponent() {
-		// TODO Auto-generated method stub
-		VerticalLayout root = new VerticalLayout();
-		StudentFilterForm filterForm = new StudentFilterForm();
-		root.add(filterForm);
-		return root;
-	}
+		Button exportButton = new Button("Download as MS Excel", VaadinIcon.DOWNLOAD.create());
 
-	private VerticalLayout buildResultsComponent() {
-		VerticalLayout root = new VerticalLayout();
-
-//		tool bar
-		var toolBar = buildToolBar();
-		toolBar.setWidthFull();
-
-//		grid
-		configureGrid();
-
-		root.add(toolBar, grid);
-		root.expand(grid);
-
-		return root;
-	}
-
-	private HorizontalLayout buildToolBar() {
-		// TODO Auto-generated method stub
+		Button importButton = new Button("Upload from MS Excel", VaadinIcon.UPLOAD.create());
+		importButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 
 		Button createButton = new Button("New", VaadinIcon.PLUS.create());
 		createButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
@@ -132,13 +120,14 @@ public class StudentsView extends VerticalLayout {
 			newStudentEditor.setStudent(student);
 		});
 
-		Span space = new Span();
+		Span blank = new Span();
 
 		HorizontalLayout root = new HorizontalLayout();
-		root.setJustifyContentMode(JustifyContentMode.END);
-		root.add(space, createButton);
-		root.expand(space);
-
+		root.setWidthFull();
+		root.setAlignItems(Alignment.CENTER);
+		root.add(recordCount, exportButton, blank, importButton, createButton);
+		root.expand(blank);
+		
 		return root;
 	}
 
@@ -207,6 +196,7 @@ public class StudentsView extends VerticalLayout {
 
 	private void reload() {
 		grid.setItems(studentService.getAllStudents());
+		recordCount.setText("100 record(s) found");
 	}
 
 //	public static abstract class StudentEvent extends ComponentEvent<StudentsView> {

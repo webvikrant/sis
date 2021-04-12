@@ -12,7 +12,7 @@ body {
 	box-shadow: 1px 1px 2px #b0b0b0;
 }
 
-.app-layout .section-title {
+.app-layout .view-title {
 	padding: 2px 8px 2px 8px;
 	border-top: 4px solid #0071e1;
 	font-size: medium;
