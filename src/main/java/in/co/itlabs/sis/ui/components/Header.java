@@ -6,35 +6,39 @@ import java.time.format.DateTimeFormatter;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
-public class Header extends FlexLayout {
+public class Header extends HorizontalLayout {
 
-	private Span appSpan = new Span();
-	private Span dateSpan = new Span();
+	private Icon icon;
+	private Span appName;
+	private Span blank;
+	private Span date;
 
 	public Header() {
-		// TODO Auto-generated constructor stub
+
+		setMargin(false);
+		setPadding(true);
+		setSpacing(true);
+
 		setJustifyContentMode(JustifyContentMode.BETWEEN);
 
-		Icon icon = VaadinIcon.DATABASE.create();
-		icon.setSize("24px");
+		icon = VaadinIcon.DATABASE.create();
+		icon.setSize("20px");
 
-//		Span logoSpan = new Span("SIS - ");
+		appName = new Span();
+		appName.setText("Student Information System");
 
-		appSpan.setText("Student Information System");
-
-		HorizontalLayout title = new HorizontalLayout();
-		title.setPadding(false);
-		title.setJustifyContentMode(JustifyContentMode.CENTER);
-		title.setAlignItems(Alignment.CENTER);
-		title.add(icon, appSpan);
+		blank = new Span();
 
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM, YYYY");
 		LocalDate today = LocalDate.now();
-		dateSpan.setText(dateFormatter.format(today));
 
-		add(title, dateSpan);
+		date = new Span();
+		date.setText(dateFormatter.format(today));
+
+		add(icon, appName, blank, date);
+
+		expand(blank);
 	}
 }

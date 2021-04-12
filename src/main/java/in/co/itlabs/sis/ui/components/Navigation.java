@@ -4,29 +4,38 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 
-public class Navigation extends FlexLayout implements AfterNavigationObserver {
+public class Navigation extends HorizontalLayout implements AfterNavigationObserver {
 
-	private final HorizontalLayout menuHLayout;
-	private final HorizontalLayout userHLayout;
+	private HorizontalLayout menuHLayout;
+	private HorizontalLayout userHLayout;
 
-	private final Button dashboardButton;
-	private final Button studentsButton;
-	private final Button studentDetailsButton;
+	private Button dashboardButton;
+	private Button studentsButton;
+	private Button studentDetailsButton;
 
-	private final Button userButton;
-	private final Button logoutButton;
+	private Button userButton;
+	private Button logoutButton;
 
 	public Navigation() {
-		// TODO Auto-generated constructor stub
+		setMargin(false);
+		setPadding(false);
+		setSpacing(false);
+
 		setJustifyContentMode(JustifyContentMode.BETWEEN);
 
 		menuHLayout = new HorizontalLayout();
+		menuHLayout.setMargin(false);
+		menuHLayout.setPadding(true);
+		menuHLayout.setSpacing(true);
+
 		userHLayout = new HorizontalLayout();
+		userHLayout.setMargin(false);
+		userHLayout.setPadding(true);
+		userHLayout.setSpacing(true);
 
 		dashboardButton = new Button("Dashboard", VaadinIcon.DASHBOARD.create());
 		studentsButton = new Button("Students", VaadinIcon.USERS.create());
@@ -61,7 +70,7 @@ public class Navigation extends FlexLayout implements AfterNavigationObserver {
 		});
 
 		userButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		
+
 		logoutButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 		logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 	}

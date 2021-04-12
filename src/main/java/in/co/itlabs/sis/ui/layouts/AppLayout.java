@@ -3,16 +3,8 @@ package in.co.itlabs.sis.ui.layouts;
 import java.util.Objects;
 
 import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
 
@@ -20,25 +12,16 @@ import in.co.itlabs.sis.ui.components.Header;
 import in.co.itlabs.sis.ui.components.Navigation;
 
 @CssImport("./layouts/app-layout.css")
-public class AppLayout extends FlexLayout implements RouterLayout {
+public class AppLayout extends VerticalLayout implements RouterLayout {
 
 	private Header header;
 	private Navigation navigation;
-	private Div content;
-	private FlexLayout footer;
+	private VerticalLayout content;
+	private HorizontalLayout footer;
 
 	public AppLayout() {
 
 		addClassName("app-layout");
-
-		setFlexDirection(FlexDirection.ROW);
-		setJustifyContentMode(JustifyContentMode.CENTER);
-		setAlignItems(Alignment.STRETCH);
-//		setHeightFull();
-
-		VerticalLayout root = new VerticalLayout();
-		root.setWidth("1000px");
-		root.setHeightFull();
 
 		header = new Header();
 		header.setWidthFull();
@@ -46,30 +29,26 @@ public class AppLayout extends FlexLayout implements RouterLayout {
 		navigation = new Navigation();
 		navigation.setWidthFull();
 
-		content = new Div();
-		content.setWidthFull();
+		content = new VerticalLayout();
+		
+		content.setMargin(false);
+		content.setPadding(false);
+		content.setSpacing(false);
+		
 		content.addClassName("content");
+		content.setWidthFull();
 
-		footer = new FlexLayout();
+		footer = new HorizontalLayout();
 		footer.setWidthFull();
-		footer.setJustifyContentMode(JustifyContentMode.BETWEEN);
-		footer.setAlignItems(Alignment.CENTER);
 
-		Icon copyright = VaadinIcon.COPYRIGHT.create();
-		copyright.setSize("10px");
-
-		Button button = new Button("Vikrant Thakur", VaadinIcon.COPYRIGHT.create());
-		button.addThemeVariants(ButtonVariant.LUMO_SMALL);
-		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
-		Anchor link = new Anchor("https://github.com/webvikrant", button);
-		Span email = new Span("webvikrant@gmail.com");
-		email.addClassName("small-text");
-
-		footer.add(link, email);
+		VerticalLayout root = new VerticalLayout();
+		
+		root.getStyle().set("margin", "auto");
+		root.setPadding(false);
+		root.setSpacing(false);
+		root.setWidth("1000px");
 
 		root.add(header, navigation, content, footer);
-		root.expand(content);
 
 		add(root);
 	}
