@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -27,6 +28,7 @@ import in.co.itlabs.sis.business.entities.Student;
 import in.co.itlabs.sis.business.services.AcademicService;
 import in.co.itlabs.sis.business.services.StudentService;
 import in.co.itlabs.sis.ui.components.StudentFilterForm;
+import in.co.itlabs.sis.ui.components.StudentListExporter;
 import in.co.itlabs.sis.ui.components.editors.NewStudentEditor;
 import in.co.itlabs.sis.ui.layouts.AppLayout;
 
@@ -35,12 +37,12 @@ import in.co.itlabs.sis.ui.layouts.AppLayout;
 public class StudentsView extends VerticalLayout {
 
 	private StudentService studentService;
-	private AcademicService academicService;
 
 	private StudentFilterForm filterForm;
 	private Span recordCount;
 	private Grid<Student> grid;
 
+	private StudentListExporter exporter;
 	private NewStudentEditor newStudentEditor;
 	private Student student;
 	private Dialog dialog;
@@ -48,9 +50,8 @@ public class StudentsView extends VerticalLayout {
 	private final List<String> messages = new ArrayList<>();
 
 	@Autowired
-	public StudentsView(StudentService studentService, AcademicService academicService) {
+	public StudentsView(StudentService studentService, AcademicService academicService, TaskExecutor taskExecutor) {
 		this.studentService = studentService;
-		this.academicService = academicService;
 
 		setMargin(false);
 		setPadding(false);
@@ -59,6 +60,8 @@ public class StudentsView extends VerticalLayout {
 		setAlignItems(Alignment.CENTER);
 
 		student = new Student();
+
+		exporter = new StudentListExporter(taskExecutor);
 
 		newStudentEditor = new NewStudentEditor(academicService);
 		newStudentEditor.addListener(NewStudentEditor.SaveEvent.class, this::handleSaveEvent);
@@ -107,6 +110,12 @@ public class StudentsView extends VerticalLayout {
 		// TODO Auto-generated method stub
 
 		Button exportButton = new Button("Download as MS Excel", VaadinIcon.DOWNLOAD.create());
+		exportButton.addClickListener(e -> {
+			dialog.removeAll();
+			dialog.setWidth("600px");
+			dialog.add(exporter);
+			dialog.open();
+		});
 
 		Button importButton = new Button("Upload from MS Excel", VaadinIcon.UPLOAD.create());
 		importButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
@@ -127,7 +136,7 @@ public class StudentsView extends VerticalLayout {
 		root.setAlignItems(Alignment.CENTER);
 		root.add(recordCount, exportButton, blank, importButton, createButton);
 		root.expand(blank);
-		
+
 		return root;
 	}
 
@@ -195,33 +204,9 @@ public class StudentsView extends VerticalLayout {
 	}
 
 	private void reload() {
-		grid.setItems(studentService.getAllStudents());
-		recordCount.setText("100 record(s) found");
+		List<Student> students = studentService.getAllStudents();
+		grid.setItems(students);
+		recordCount.setText(students.size() + " record(s) found");
+		exporter.setStudents(students);
 	}
-
-//	public static abstract class StudentEvent extends ComponentEvent<StudentsView> {
-//		private Student student;
-//
-//		protected StudentEvent(StudentsView source, Student student) {
-//
-//			super(source, false);
-//			this.student = student;
-//		}
-//
-//		public Student getStudent() {
-//			return student;
-//		}
-//	}
-//
-//	public static class ShowDetailsEvent extends StudentEvent {
-//		ShowDetailsEvent(StudentsView source, Student student) {
-//			super(source, student);
-//		}
-//	}
-//
-//	public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
-//			ComponentEventListener<T> listener) {
-//
-//		return getEventBus().addListener(eventType, listener);
-//	}
 }

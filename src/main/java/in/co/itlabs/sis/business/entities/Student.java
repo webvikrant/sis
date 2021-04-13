@@ -1,6 +1,7 @@
 package in.co.itlabs.sis.business.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import in.co.itlabs.sis.business.helpers.AdmissionMode;
 import in.co.itlabs.sis.business.helpers.Gender;
@@ -16,7 +17,6 @@ public class Student {
 	private int id;
 
 	// personal details
-
 	private String name; // required
 	private LocalDate birthDate; // required
 	private int photoMediaFileId;
@@ -83,5 +83,14 @@ public class Student {
 	public void clear() {
 		name = null;
 		admissionId = null;
+	}
+
+	public static final String ID = "id";
+	public static final String NAME = "name";
+	public static final String ADMISSION_ID = "admissionId";
+
+	public static List<String> columns() {
+		List<String> columns = List.of(ID, NAME, ADMISSION_ID);
+		return columns;
 	}
 }
